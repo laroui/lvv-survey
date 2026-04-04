@@ -319,7 +319,7 @@ export default function PhoneInput({ value = '', onChange, nationality = '' }) {
         style={{
           flex: 1, padding: '11px 14px', height: 44,
           border: '1px solid var(--beige-dark)', borderRadius: 10,
-          fontFamily: 'var(--font-sans)', fontSize: 15,
+          fontFamily: 'var(--font-sans)', fontSize: 16,
           color: 'var(--plum-dark)', outline: 'none', boxSizing: 'border-box',
           background: '#fff',
         }}

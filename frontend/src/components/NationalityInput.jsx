@@ -229,7 +229,7 @@ export default function NationalityInput({ value = '', onChange, placeholder = '
               placeholder="Search country..."
               style={{
                 width: '100%', padding: '7px 10px', border: '1px solid var(--beige-mid)',
-                borderRadius: 7, fontSize: 13, outline: 'none',
+                borderRadius: 7, fontSize: 16, outline: 'none',
                 fontFamily: 'var(--font-sans)', boxSizing: 'border-box',
               }}
             />

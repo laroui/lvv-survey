@@ -79,7 +79,7 @@ export function TextInput({ value, onChange, placeholder, type = 'text', style }
       placeholder={placeholder}
       style={{
         width: '100%', border: '1px solid var(--beige-dark)', borderRadius: 'var(--radius-sm)',
-        padding: '10px 14px', fontSize: 14, fontFamily: 'var(--font-sans)',
+        padding: '10px 14px', fontSize: 16, fontFamily: 'var(--font-sans)',
         color: 'var(--text-dark)', background: 'var(--beige)', outline: 'none',
         transition: 'border 0.2s, background 0.2s',
         ...style,
@@ -98,7 +98,7 @@ export function Select({ value, onChange, options, placeholder }) {
       onChange={e => onChange(e.target.value)}
       style={{
         width: '100%', border: '1px solid var(--beige-dark)', borderRadius: 'var(--radius-sm)',
-        padding: '10px 14px', fontSize: 14, fontFamily: 'var(--font-sans)',
+        padding: '10px 14px', fontSize: 16, fontFamily: 'var(--font-sans)',
         color: value ? 'var(--text-dark)' : 'var(--text-hint)',
         background: 'var(--beige)', outline: 'none', appearance: 'none',
         backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a7080' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`,

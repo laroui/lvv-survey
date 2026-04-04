@@ -32,13 +32,13 @@ function Header({ hotelName }) {
 
 function Wrapper({ pct, hotelName, children }) {
   return (
-    <>
+    <div style={{ width: '100%', maxWidth: '100vw', overflowX: 'hidden', boxSizing: 'border-box' }}>
       <Header hotelName={hotelName} />
       <div style={{ width: '100%', maxWidth: 640, margin: '0 auto', padding: '1.5rem 1.5rem 4rem', boxSizing: 'border-box' }}>
         <ProgressBar pct={pct} />
         {children}
       </div>
-    </>
+    </div>
   );
 }
 
@@ -124,7 +124,7 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
     const displayPartner = partnerName || hotelName;
     return (
       <div style={{
-        minHeight: '100vh',
+        minHeight: '100vh', width: '100%', maxWidth: '100vw', overflowX: 'hidden',
         background: 'linear-gradient(175deg, #2a1520 0%, #3d1f2e 35%, #52384a 70%, #3a2233 100%)',
         display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center',
