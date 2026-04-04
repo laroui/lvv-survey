@@ -169,10 +169,25 @@ const OTHER_CODES = [
 
 const ALL_CODES = [...PRIORITY_CODES, ...OTHER_CODES];
 
-export default function PhoneInput({ value = '', onChange }) {
+// Resolve a nationality name (from SurveyForm step 2) to a dial-code entry
+function resolveNationality(name) {
+  if (!name) return null;
+  return ALL_CODES.find(c => c.name.toLowerCase() === name.toLowerCase()) || null;
+}
+
+export default function PhoneInput({ value = '', onChange, nationality = '' }) {
+  const natEntry = resolveNationality(nationality);
+
   // value format: { dialCode: '+33', number: '612345678' }
-  const parsed = typeof value === 'object' ? value : { dialCode: '+33', number: value || '' };
-  const [dialCode, setDialCode] = useState(parsed.dialCode || '+33');
+  // If no existing value, default to the nationality's code (else France)
+  const parsed = typeof value === 'object' ? value : { dialCode: '', number: value || '' };
+  const defaultCode = natEntry?.code || '+33';
+  const [dialCode, setDialCode] = useState(parsed.dialCode || defaultCode);
+  const [selectedName, setSelectedName] = useState(
+    parsed.dialCode
+      ? (ALL_CODES.find(c => c.code === parsed.dialCode)?.name || '')
+      : (natEntry?.name || PRIORITY_CODES[0].name)
+  );
   const [number, setNumber] = useState(parsed.number || '');
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
@@ -189,13 +204,29 @@ export default function PhoneInput({ value = '', onChange }) {
     onChange({ dialCode: dc, number: num, full: num ? `${dc} ${num}` : '' });
   };
 
-  const selectedCountry = ALL_CODES.find(c => c.code === dialCode) || PRIORITY_CODES[0];
+  const selectedCountry = ALL_CODES.find(c => c.code === dialCode && c.name === selectedName)
+    || ALL_CODES.find(c => c.code === dialCode)
+    || PRIORITY_CODES[0];
 
-  const filtered = search
-    ? ALL_CODES.filter(c => c.name.toLowerCase().includes(search.toLowerCase()) || c.code.includes(search))
-    : ALL_CODES;
+  // Build the ordered list: nationality entry first (if different from rest), then all
+  const buildList = () => {
+    if (search) {
+      return ALL_CODES.filter(c =>
+        c.name.toLowerCase().includes(search.toLowerCase()) || c.code.includes(search)
+      );
+    }
+    if (natEntry) {
+      const rest = ALL_CODES.filter(c => c.name !== natEntry.name);
+      return [natEntry, ...rest];
+    }
+    return ALL_CODES;
+  };
 
-  const hasDivider = !search && filtered.length > PRIORITY_CODES.length;
+  const listItems = buildList();
+  // Divider positions when no search
+  const natPinned = !search && natEntry;
+  // after natEntry (index 0) → divider at 1; after priority block → divider at PRIORITY_CODES.length + (natPinned ? 1 : 0)
+  const priorityEnd = PRIORITY_CODES.length + (natPinned ? 1 : 0);
 
   return (
     <div style={{ display: 'flex', gap: 8, position: 'relative' }}>
@@ -245,24 +276,27 @@ export default function PhoneInput({ value = '', onChange }) {
 
             {/* List */}
             <div style={{ overflowY: 'auto', flex: 1 }}>
-              {filtered.map((c, i) => (
+              {listItems.map((c, i) => (
                 <>
-                  {hasDivider && i === PRIORITY_CODES.length && (
-                    <div key="divider" style={{
-                      height: 1, background: 'var(--beige-mid)', margin: '4px 0',
-                    }} />
+                  {/* Divider after pinned nationality */}
+                  {natPinned && i === 1 && (
+                    <div key="divider-nat" style={{ height: 1, background: 'var(--beige-mid)', margin: '4px 0' }} />
+                  )}
+                  {/* Divider between priority and other */}
+                  {!search && i === priorityEnd && (
+                    <div key="divider-priority" style={{ height: 1, background: 'var(--beige-mid)', margin: '4px 0' }} />
                   )}
                   <div
                     key={`${c.code}-${c.name}`}
-                    onClick={() => { setDialCode(c.code); setOpen(false); notifyChange(c.code, number); }}
+                    onClick={() => { setDialCode(c.code); setSelectedName(c.name); setOpen(false); notifyChange(c.code, number); }}
                     style={{
                       display: 'flex', alignItems: 'center', gap: 10,
                       padding: '9px 12px', cursor: 'pointer',
-                      background: c.code === dialCode && c.name === selectedCountry.name ? 'var(--beige)' : 'transparent',
+                      background: c.name === selectedCountry.name ? 'var(--beige)' : 'transparent',
                       transition: 'background 0.1s',
                     }}
                     onMouseEnter={e => e.currentTarget.style.background = 'var(--beige)'}
-                    onMouseLeave={e => e.currentTarget.style.background = c.code === dialCode ? 'var(--beige)' : 'transparent'}
+                    onMouseLeave={e => e.currentTarget.style.background = c.name === selectedCountry.name ? 'var(--beige)' : 'transparent'}
                   >
                     <span style={{ fontSize: 18 }}>{c.flag}</span>
                     <span style={{ flex: 1, fontSize: 13, color: 'var(--plum-dark)', fontWeight: 300 }}>{c.name}</span>

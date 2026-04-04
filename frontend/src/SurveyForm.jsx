@@ -222,7 +222,7 @@ export default function SurveyForm({ onComplete }) {
       <StepLabel>{t(lang, 'Step 3 of 13', 'Étape 3 sur 13')}</StepLabel>
       <StepQuestion>{t(lang, 'Your contact number', 'Votre numéro de contact')}</StepQuestion>
       <Field label={t(lang, 'Phone Number', 'Téléphone')} hint={t(lang, 'Optional — for membership & PS coordination', 'Optionnel — adhésion et coordination PS')}>
-        <PhoneInput value={form.phone} onChange={v => set('phone', v)} />
+        <PhoneInput value={form.phone} onChange={v => set('phone', v)} nationality={form.nationality} />
       </Field>
       <NavBtns onBack={back} onNext={next} backLabel={t(lang, '← Back', '← Retour')} nextLabel={t(lang, 'Continue →', 'Continuer →')} />
     </Wrapper>
