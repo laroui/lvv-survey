@@ -167,12 +167,11 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
         <div style={{ display: 'flex', alignItems: 'center', gap: 20, paddingTop: '2.5rem' }}>
           {/* LVV */}
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 13, letterSpacing: '0.05em', color: 'rgba(245,240,230,0.9)', fontWeight: 400, fontFamily: 'var(--font-sans)' }}>
-              La Vallée Village
-            </div>
-            <div style={{ fontSize: 8, letterSpacing: '0.18em', color: 'rgba(245,240,230,0.35)', textTransform: 'uppercase', marginTop: 3, fontFamily: 'var(--font-sans)' }}>
-              The Bicester Collection
-            </div>
+            <img
+              src="/images/LVV Logo Black transparent.png"
+              alt="La Vallée Village"
+              style={{ height: 32, filter: 'brightness(0) invert(1)', opacity: 0.85, display: 'block', margin: '0 auto' }}
+            />
           </div>
 
           {/* × separator */}
