@@ -74,6 +74,7 @@ export default function LoginPage() {
               onChange={e => setEmail(e.target.value)}
               required
               autoFocus
+              autoComplete="email"
               style={{
                 width: '100%',
                 padding: '11px 14px',
@@ -111,6 +112,7 @@ export default function LoginPage() {
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
+              autoComplete="current-password"
               style={{
                 width: '100%',
                 padding: '11px 14px',
