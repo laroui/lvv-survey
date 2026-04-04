@@ -256,7 +256,7 @@ export default function PhoneInput({ value = '', onChange, nationality = '' }) {
             background: '#fff', border: '1px solid var(--beige-dark)',
             borderRadius: 10, marginTop: 4,
             boxShadow: '0 8px 32px rgba(82,56,73,0.14)',
-            width: 260, maxHeight: 320, overflow: 'hidden',
+            width: 'min(260px, calc(100vw - 32px))', maxHeight: 320, overflow: 'hidden',
             display: 'flex', flexDirection: 'column',
           }}>
             {/* Search */}
@@ -268,7 +268,7 @@ export default function PhoneInput({ value = '', onChange, nationality = '' }) {
                 placeholder="Search country..."
                 style={{
                   width: '100%', padding: '7px 10px', border: '1px solid var(--beige-mid)',
-                  borderRadius: 7, fontSize: 13, outline: 'none',
+                  borderRadius: 7, fontSize: 16, outline: 'none',
                   fontFamily: 'var(--font-sans)', boxSizing: 'border-box',
                 }}
               />

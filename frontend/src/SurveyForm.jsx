@@ -34,7 +34,7 @@ function Wrapper({ pct, hotelName, children }) {
   return (
     <>
       <Header hotelName={hotelName} />
-      <div style={{ maxWidth: 640, margin: '0 auto', padding: '1.5rem 1.5rem 4rem' }}>
+      <div style={{ width: '100%', maxWidth: 640, margin: '0 auto', padding: '1.5rem 1.5rem 4rem', boxSizing: 'border-box' }}>
         <ProgressBar pct={pct} />
         {children}
       </div>
@@ -299,7 +299,7 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
         <div style={{ marginBottom: 16, padding: '8px 14px', background: 'var(--beige-mid)', borderRadius: 'var(--radius-sm)', fontSize: 12, color: 'var(--text-muted)' }}>
           {t(lang, 'System auto-detected from nationality:', 'Système détecté selon la nationalité :')} <strong style={{ color: 'var(--plum)' }}>{sys}</strong>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 20 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(68px, 1fr))', gap: 8, marginBottom: 20 }}>
           {sizes.map(s => (
             <div key={s} onClick={() => { set('sizingValue', s); set('sizingSystem', sys); }}
               style={{
