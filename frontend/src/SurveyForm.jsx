@@ -43,13 +43,15 @@ function Wrapper({ pct, hotelName, children }) {
 }
 
 export default function SurveyForm({ onComplete, config = {} }) {
-  const hotelName = config?.hotelName || 'The Peninsula Paris';
-  const stylesFemale = config?.styles?.female || STYLES_FEMALE;
-  const stylesMale   = config?.styles?.male   || STYLES_MALE;
-  const configCats   = config?.categories     || CATEGORIES;
-  const configLife   = config?.lifestyle      || LIFESTYLE;
-  const configTravel = config?.travel         || TRAVEL_OPTIONS;
-  const configEvents = config?.events         || EVENT_OPTIONS;
+  const hotelName       = config?.hotelName  || 'The Peninsula Paris';
+  const stylesFemale    = config?.styles?.female || STYLES_FEMALE;
+  const stylesMale      = config?.styles?.male   || STYLES_MALE;
+  const configCats      = config?.categories     || CATEGORIES;
+  const configPurposes  = config?.purposes       || PURPOSES;
+  const configPsModes   = config?.psModes        || PS_MODES;
+  const configLife      = config?.lifestyle      || LIFESTYLE;
+  const configTravel    = config?.travel         || TRAVEL_OPTIONS;
+  const configEvents    = config?.events         || EVENT_OPTIONS;
   const [step, setStep] = useState(-1); // -1 = start screen
   const [lang, setLang] = useState('en');
   const [form, setForm] = useState({
@@ -280,7 +282,7 @@ export default function SurveyForm({ onComplete, config = {} }) {
       <StepLabel>{t(lang, 'Step 5 of 13', 'Étape 5 sur 13')}</StepLabel>
       <StepQuestion>{t(lang, 'What brings you to this experience?', "Qu'est-ce qui vous amène ?")}</StepQuestion>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {PURPOSES.map(p => (
+        {configPurposes.map(p => (
           <OptionItem
             key={p.id}
             label={t(lang, p.labelEN, p.labelFR)}
@@ -300,7 +302,7 @@ export default function SurveyForm({ onComplete, config = {} }) {
       <StepLabel>{t(lang, 'Step 6 of 13', 'Étape 6 sur 13')}</StepLabel>
       <StepQuestion>{t(lang, 'How would you like your Personal Shopper experience?', 'Comment souhaitez-vous être accompagné(e) ?')}</StepQuestion>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {PS_MODES.map(p => (
+        {configPsModes.map(p => (
           <OptionItem key={p.id} label={t(lang, p.labelEN, p.labelFR)} selected={form.psMode === p.id} onClick={() => set('psMode', p.id)} />
         ))}
       </div>
@@ -446,8 +448,8 @@ export default function SurveyForm({ onComplete, config = {} }) {
     const styleNames = form.styles.map(id => getStyleName(id)).join(', ');
     const catLabels = form.categories.map(id => { const c = configCats.find(x => x.id === id); return c ? t(lang, c.labelEN, c.labelFR) : id; }).join(', ');
     const lifeLabels = form.lifestyle.map(id => { const l = configLife.find(x => x.id === id); return l ? t(lang, l.labelEN, l.labelFR) : id; }).join(', ');
-    const purposeLabel = PURPOSES.find(p => p.id === form.purpose)?.[lang === 'fr' ? 'labelFR' : 'labelEN'] || '—';
-    const psModeLabel = PS_MODES.find(p => p.id === form.psMode)?.[lang === 'fr' ? 'labelFR' : 'labelEN'] || '—';
+    const purposeLabel = configPurposes.find(p => p.id === form.purpose)?.[lang === 'fr' ? 'labelFR' : 'labelEN'] || '—';
+    const psModeLabel = configPsModes.find(p => p.id === form.psMode)?.[lang === 'fr' ? 'labelFR' : 'labelEN'] || '—';
     const travelLabels = [...form.travel.map(id => configTravel.find(x => x.id === id)?.[lang === 'fr' ? 'labelFR' : 'labelEN'] || id), form.travelCustom].filter(Boolean).join(', ');
     const eventLabels = [...form.events.map(id => configEvents.find(x => x.id === id)?.[lang === 'fr' ? 'labelFR' : 'labelEN'] || id), form.eventCustom].filter(Boolean).join(', ');
 
