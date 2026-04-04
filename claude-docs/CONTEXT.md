@@ -1,15 +1,15 @@
 # Project Context — LVV Survey Tool
 
-> Read this file at the start of every Claude Code session before executing any batch.
+> Read this file at the start of every session before doing anything.
 
 ## What This Project Is
 A fullstack webapp for La Vallée Village's partnerships team.
-It lets them create branded guest survey forms, share unique URLs with hotel partners,
+Lets them create branded guest survey forms, share unique URLs with hotel partners,
 collect pre-arrival guest profiles, and export data to SharePoint.
 
 ## First Partner
 **The Peninsula Paris** — luxury hotel, Avenue Kléber, Paris 16e.
-The survey collects guest style preferences to personalise their shopping experience
+Survey collects guest style preferences to personalise their shopping experience
 at La Vallée Village (luxury outlet, Marne-la-Vallée, Paris region).
 
 ## Tech Stack
@@ -18,70 +18,99 @@ at La Vallée Village (luxury outlet, Marne-la-Vallée, Paris region).
 - **Database:** Neon PostgreSQL — `@neondatabase/serverless`
 - **Auth:** JWT + bcrypt — no OAuth
 - **Deploy:** Vercel (frontend) + Railway (backend)
-- **Fonts:** Aimé (display/serif) + Brown Std (sans body) — in `frontend/public/fonts/`
+- **Fonts:** Aimé (display/serif) + Brown Std (sans body) — `frontend/public/fonts/`
 
 ## Design Tokens (DO NOT CHANGE)
 ```
---plum:       #523849   (primary brand colour)
+--plum:       #523849
 --plum-dark:  #2a1a22
---gold:       #C9A84C   (accent)
---beige:      #F5F0E6   (background)
---font-display: 'Aime'     (for all titles, questions, hero text)
---font-sans:    'BrownStd' (for body, labels, inputs)
+--gold:       #C9A84C
+--beige:      #F5F0E6
+--font-display: 'Aime'
+--font-sans:    'BrownStd'
 ```
 
 ## Key Rules
-1. Every batch = one Git commit with the exact message in the batch file
-2. Always commit AND push after every change — Vercel auto-deploys on push
-3. Never break existing functionality — run `npm run build` before committing
-4. Backend always on port 3001, frontend on 5173
-5. All API routes prefixed with `/api`
-6. JWT stored in localStorage key: `lvv_token`
-7. Responses stored in Neon, not localStorage (localStorage = demo only)
-8. `public_url_token` is the UUID used in `/f/:token` — never expose internal DB id to guests
-9. All DB queries use `@neondatabase/serverless` neon tagged template literals
-10. Brown Std Thin (weight 100) / Light (300) for body text, Regular (400) for emphasis
-11. Aimé Regular (400) for titles, Aimé Italic for style card overlays
+1. Always commit AND push after every change — Vercel auto-deploys on push
+2. Never break existing functionality
+3. Backend port 3001, frontend 5173
+4. All API routes prefixed `/api`
+5. JWT in localStorage key `lvv_token`
+6. `public_url_token` UUID used in `/f/:token` — never expose DB id to guests
+7. All DB queries use `@neondatabase/serverless` tagged template literals OR `sql(string, [params])` for dynamic WHERE
+8. Brown Std Thin/Light for body, Regular for emphasis; Aimé Regular for titles
 
 ---
 
-## Current Infrastructure (LIVE)
+## Live Infrastructure
 
 | Service | URL | Status |
 |---|---|---|
 | Frontend | https://lvv-survey.vercel.app | ✅ Live |
 | Backend | https://lvv-survey-production-d4a4.up.railway.app | ✅ Live |
-| Database | Neon PostgreSQL (gwc.azure region) | ✅ Connected |
+| Database | Neon PostgreSQL (gwc.azure) | ✅ Connected |
 
-### Admin credentials (first login)
-- Email: `admin@lavallee-village.com`
-- Password: `LVV2025!` — change after first login
+**Admin credentials:** `admin@lavallee-village.com` / `LVV2025!`
 
 ---
 
-## Completed Batches
+## What's Been Built (fully live)
 
-### BATCH-01 — Backend Scaffold ✅
-- Monorepo restructure: `frontend/` + `backend/` + `claude-docs/`
-- Express + CORS + dotenv backend
-- Neon PostgreSQL client (`backend/src/db.js`)
-- `GET /api/health` → `{ status: 'ok', db: 'connected' }`
-- DB schema created: `partners`, `users`, `forms`, `responses`
-- Peninsula Paris seeded as first partner
-- `railway.json` at root for Railway monorepo deploy
-- `vercel.json` updated to build from `frontend/`
+### Auth
+- `POST /api/auth/login` → JWT 24h
+- `POST /api/auth/register` (admin only)
+- `requireAuth` middleware
+- `LoginPage`, `ProtectedRoute`, `useAuth` hook
 
-### BATCH-02 — Auth (JWT) ✅
-- `POST /api/auth/login` — returns JWT (24h)
-- `POST /api/auth/register` — admin only, bcrypt 12 rounds
-- `GET /api/auth/me` — protected route
-- `requireAuth` JWT middleware (`backend/src/middleware/auth.js`)
-- Seed script: `node backend/src/seed.js` (creates first admin)
-- `LoginPage.jsx` — plum/gold styled, Aimé + Brown Std fonts
-- `useAuth` hook — login/logout, token in localStorage
-- `ProtectedRoute` component — redirects to /login if expired
-- React Router v6: `/login`, `/dashboard`, `/f/:token`
-- Branding: "La Vallée Village" only (no × Peninsula in nav)
+### Forms (admin)
+- `GET/POST /api/forms` — list + create
+- `GET/PUT /api/forms/:id` — detail + update
+- `GET /api/forms/public/:token` — public guest endpoint (no auth), returns config + theme + partner_name + partner_logo_url
+- `FormBuilderPage` — two-tab UI (Settings / Content)
+  - Settings: title, partner, hotel name, language, optional sections toggles, thank-you messages (EN + FR)
+  - Content tab: `FormContentEditor` — per-section overrides for all 7 survey sections
+- `FormDetailPage` — view form, copy link, toggle active, edit/delete
+- `FormCard` — dashboard grid card
+
+### Partners (admin)
+- `GET/POST /api/partners` — list + create with form_count + response_count
+- `GET/PUT/DELETE /api/partners/:id` — detail + update + soft-delete
+- `PartnersPage` — grid with `PartnerModal` (create/edit, theme color pickers)
+- `PartnerDetailPage` — inline edit, theme swatches, forms list
+- `partners` table columns: `name`, `slug`, `description`, `website`, `contact_email`, `logo_url`, `theme_preset` (JSONB), `is_active`
+- `backend/src/migrations.js` — idempotent `ADD COLUMN IF NOT EXISTS` migrations, run at startup
+
+### Responses (admin)
+- `GET /api/responses?formId=&from=&to=&gender=&style=` — filtered, server-side
+- `GET /api/responses/export` — CSV download with SharePoint-compatible headers (defined BEFORE `/:id` route)
+- `GET /api/responses/:id` — single response detail
+- `DELETE /api/responses/:id` — delete
+- Dynamic WHERE built with positional `$N` params via `sql(queryString, [params])`
+- `ResponsesPage` — per-form filter bar (date, gender, style), stats, detail drawer, export button
+- `DetailDrawer` — fixed right panel, guest profile, delete with confirm
+
+### Survey (guest-facing)
+- 14-step flow: Language → Identity → Gender/Nationality → Phone → Sizing → Purpose → PS Mode → Style → Categories → Brands → Lifestyle → Travel → Events → Review/Consent
+- `SurveyForm.jsx` — all steps, config overrides for every section
+- Config override pattern: all 7 sections default to `null` in `forms.config` (→ uses `data.js` defaults). When admin clicks "Customise", section is deep-cloned into config JSONB.
+- `PublicSurveyPage` — fetches form by token, applies theme CSS vars, handles submit + thanks screen
+
+### Landing Page (guest)
+- Full-screen dark plum gradient (`#2a1520 → #3d1f2e → #52384a`)
+- Pill "Start" button with frosted-glass style
+- Logo footer: **LVV logo image** (`/images/LVV Logo Black transparent.png`, white-filtered) **×** partner name or logo
+- `partner_logo_url` returned from public API → shown white-filtered if set, falls back to text
+
+### Admin Navigation
+- `AdminNav` component — shared across all admin pages
+- Three tabs: Forms (`/dashboard`) · Responses (`/responses`) · Partners (`/partners`)
+
+### Mobile / Responsive
+- All inputs set to `fontSize: 16` inline — prevents iOS Safari viewport zoom on focus
+- `Wrapper` is a real `div` with `overflowX: hidden; maxWidth: 100vw`
+- `html, body, #root`: `overflow-x: hidden; width: 100%; max-width: 100vw`
+- PhoneInput dropdown: `width: min(260px, calc(100vw - 32px))`
+- Sizing grid: `repeat(auto-fill, minmax(68px, 1fr))`
 
 ---
 
@@ -91,57 +120,64 @@ lvv-survey/
 ├── frontend/
 │   ├── src/
 │   │   ├── pages/
-│   │   │   └── LoginPage.jsx
+│   │   │   ├── LoginPage.jsx
+│   │   │   ├── DashboardPage.jsx
+│   │   │   ├── FormBuilderPage.jsx
+│   │   │   ├── FormDetailPage.jsx
+│   │   │   ├── ResponsesPage.jsx
+│   │   │   ├── PartnersPage.jsx
+│   │   │   ├── PartnerDetailPage.jsx
+│   │   │   └── PublicSurveyPage.jsx
 │   │   ├── components/
+│   │   │   ├── AdminNav.jsx
+│   │   │   ├── FormCard.jsx
+│   │   │   ├── FormContentEditor.jsx
+│   │   │   ├── PhoneInput.jsx
+│   │   │   ├── NationalityInput.jsx
 │   │   │   └── ProtectedRoute.jsx
 │   │   ├── hooks/
 │   │   │   └── useAuth.js
-│   │   ├── components.jsx   ← shared UI primitives
-│   │   ├── data.js          ← style archetypes, categories, options
-│   │   ├── SurveyForm.jsx   ← 14-step survey (localStorage for now)
-│   │   ├── ResponsesPage.jsx
-│   │   ├── SettingsPage.jsx
-│   │   ├── App.jsx          ← routing shell
-│   │   └── index.css        ← font declarations + CSS variables
-│   ├── public/fonts/        ← Aimé + Brown Std OTF files
+│   │   ├── components.jsx   ← shared UI primitives (Btn, Card, TextInput, etc.)
+│   │   ├── data.js          ← STYLES_FEMALE/MALE, CATEGORIES, PURPOSES, PS_MODES, LIFESTYLE, TRAVEL_OPTIONS, EVENT_OPTIONS, SIZING_MAP
+│   │   ├── SurveyForm.jsx   ← 14-step guest survey
+│   │   └── App.jsx          ← routes
+│   ├── public/
+│   │   ├── fonts/           ← Aimé + Brown Std OTF
+│   │   └── images/
+│   │       ├── LVV Logo Black transparent.png
+│   │       └── boho-chic.jpg
+│   ├── index.html
+│   ├── index.css
 │   ├── .env                 ← VITE_API_URL=http://localhost:3001
-│   ├── .env.production      ← VITE_API_URL=https://lvv-survey-production-d4a4.up.railway.app
-│   └── package.json
+│   └── .env.production      ← VITE_API_URL=https://lvv-survey-production-d4a4.up.railway.app
 ├── backend/
 │   ├── src/
-│   │   ├── index.js         ← Express entry, CORS allowlist
-│   │   ├── db.js            ← Neon client
+│   │   ├── index.js         ← Express entry, CORS, runMigrations() at startup
+│   │   ├── db.js            ← Neon client export
+│   │   ├── migrations.js    ← idempotent ADD COLUMN IF NOT EXISTS
 │   │   ├── routes/
-│   │   │   ├── health.js    ← GET /api/health
-│   │   │   └── auth.js      ← POST /login, /register — GET /me
+│   │   │   ├── health.js
+│   │   │   ├── auth.js
+│   │   │   ├── forms.js     ← /export route MUST be before /:id
+│   │   │   ├── partners.js
+│   │   │   └── responses.js ← /export route MUST be before /:id
 │   │   ├── middleware/
-│   │   │   ├── auth.js      ← requireAuth JWT middleware
+│   │   │   ├── auth.js
 │   │   │   └── errorHandler.js
-│   │   └── seed.js          ← run once to create admin user
-│   ├── .env                 ← DATABASE_URL, JWT_SECRET, PORT, FRONTEND_URL
-│   ├── .env.example
-│   ├── schema.sql           ← full DB schema (already applied to Neon)
-│   └── package.json
+│   │   └── seed.js
+│   ├── schema.sql
+│   ├── .env
+│   └── .env.example
 ├── claude-docs/
-│   ├── CONTEXT.md           ← this file
-│   └── batches/
-│       ├── BATCH-01.md ✅
-│       ├── BATCH-02.md ✅
-│       ├── BATCH-03.md ← NEXT
-│       ├── BATCH-04.md
-│       ├── BATCH-05.md
-│       ├── BATCH-06.md
-│       ├── BATCH-07.md
-│       └── BATCH-08.md
-├── railway.json             ← Railway monorepo config (build from backend/)
-├── vercel.json              ← Vercel config (build from frontend/)
-├── package.json             ← root scripts: npm run dev / build / start
-└── README.md
+│   └── CONTEXT.md           ← this file
+├── railway.json
+├── vercel.json
+└── package.json
 ```
 
 ## Environment Variables
 
-### backend/.env (local) + Railway Variables (prod)
+### backend/.env + Railway
 ```
 DATABASE_URL=postgresql://neondb_owner:...@ep-quiet-boat-a988ce07-pooler.gwc.azure.neon.tech/neondb?sslmode=require&channel_binding=require
 PORT=3001
@@ -154,10 +190,14 @@ JWT_SECRET=lvv_jwt_secret_replace_in_prod_2026
 VITE_API_URL=http://localhost:3001
 ```
 
-### frontend/.env.production (committed — not a secret)
+### frontend/.env.production
 ```
 VITE_API_URL=https://lvv-survey-production-d4a4.up.railway.app
 ```
 
-## Next: BATCH-03
-See `claude-docs/batches/BATCH-03.md`
+## Known Gotchas
+- Dynamic SQL with neon: use `sql(queryString, [params])` form for conditional WHERE, not template literals
+- Express route ordering: `/export` must be defined before `/:id` in both forms.js and responses.js
+- `runMigrations()` runs on every backend startup — all migrations must be idempotent (`IF NOT EXISTS`)
+- iOS Safari zooms viewport on input focus if `font-size < 16px` — ALL inputs must have `fontSize: 16` as inline style (CSS rules can't override inline in React)
+- Partner logo displayed white-filtered on dark landing page via `filter: brightness(0) invert(1)`
