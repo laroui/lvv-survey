@@ -5,10 +5,48 @@ import QRCode from 'qrcode';
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 const TOKEN = () => localStorage.getItem('lvv_token');
 
+const CSV_COLS = [
+  { key: d => `${d.firstName || ''} ${d.surname || ''}`.trim(), label: 'Full Name' },
+  { key: d => d.initials || '',        label: 'Initials' },
+  { key: d => d.email || '',           label: 'Email' },
+  { key: d => d.phone?.full || d.phone || '', label: 'Phone' },
+  { key: d => d.gender || '',          label: 'Civility' },
+  { key: d => d.nationality || '',     label: 'Nationality' },
+  { key: d => d.sizingSystem || '',    label: 'Sizing System' },
+  { key: d => d.sizingValue || '',     label: 'Size' },
+  { key: d => d.purpose || '',         label: 'Purpose' },
+  { key: d => d.psMode || '',          label: 'PS Mode' },
+  { key: d => (d.styles || []).join(', '), label: 'Styles' },
+  { key: d => (d.categories || []).join(', '), label: 'Categories' },
+  { key: d => (d.brands || []).filter(b => b !== 'none').join(', '), label: 'Brands' },
+  { key: d => (d.lifestyle || []).join(', '), label: 'Lifestyle' },
+  { key: d => (d.travel || []).join(', '),    label: 'Travel' },
+  { key: d => (d.events || []).join(', '),    label: 'Events' },
+  { key: d => d.consent ? 'Yes' : 'No',      label: 'Consent' },
+  { key: d => d.submittedAt || '',            label: 'Submitted At' },
+];
+
+function exportCSV(responses, formTitle) {
+  const header = CSV_COLS.map(c => `"${c.label}"`).join(',');
+  const rows = responses.map(r => {
+    const d = r.data || {};
+    return CSV_COLS.map(c => `"${String(c.key(d)).replace(/"/g, '""')}"`).join(',');
+  });
+  const csv = [header, ...rows].join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${formTitle.replace(/\s+/g, '_')}_responses.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 export default function FormDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [form, setForm] = useState(null);
+  const [responses, setResponses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
   const qrRef = useRef(null);
@@ -20,6 +58,12 @@ export default function FormDetailPage() {
       .then(r => r.json())
       .then(d => { if (d.success) setForm(d.data); })
       .finally(() => setLoading(false));
+  }, [id]);
+
+  useEffect(() => {
+    fetch(`${API}/api/responses?formId=${id}&limit=200`, { headers: { Authorization: `Bearer ${TOKEN()}` } })
+      .then(r => r.json())
+      .then(d => { if (d.success) setResponses(d.data); });
   }, [id]);
 
   useEffect(() => {
@@ -168,6 +212,74 @@ export default function FormDetailPage() {
               Scan to open survey
             </div>
           </div>
+        </div>
+
+        {/* Responses table */}
+        <div style={{ marginTop: 28, background: '#fff', border: '1px solid var(--beige-mid)', borderRadius: 12, overflow: 'hidden' }}>
+          <div style={{ display: 'flex', alignItems: 'center', padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--beige-mid)' }}>
+            <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#aaa', flex: 1 }}>
+              Responses ({responses.length})
+            </div>
+            {responses.length > 0 && (
+              <button
+                onClick={() => exportCSV(responses, form.title)}
+                style={{
+                  padding: '7px 16px', background: 'var(--plum)', border: 'none',
+                  borderRadius: 7, color: 'var(--beige)', fontSize: 11, cursor: 'pointer',
+                  fontFamily: 'var(--font-sans)', letterSpacing: '0.07em', textTransform: 'uppercase',
+                }}
+              >
+                Export CSV
+              </button>
+            )}
+          </div>
+
+          {responses.length === 0 ? (
+            <div style={{ padding: '2.5rem', textAlign: 'center', color: '#bbb', fontWeight: 300, fontSize: 13 }}>
+              No responses yet
+            </div>
+          ) : (
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                <thead>
+                  <tr style={{ background: 'var(--beige)' }}>
+                    {['Name', 'Email', 'Phone', 'Nationality', 'Size', 'Styles', 'Submitted'].map(h => (
+                      <th key={h} style={{
+                        padding: '10px 14px', textAlign: 'left', fontWeight: 400,
+                        color: '#aaa', fontSize: 10, textTransform: 'uppercase',
+                        letterSpacing: '0.08em', whiteSpace: 'nowrap',
+                        borderBottom: '1px solid var(--beige-mid)',
+                      }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {responses.map((r, i) => {
+                    const d = r.data || {};
+                    return (
+                      <tr key={r.id} style={{ borderBottom: '1px solid var(--beige-mid)', background: i % 2 === 0 ? '#fff' : 'rgba(245,240,230,0.4)' }}>
+                        <td style={{ padding: '10px 14px', color: 'var(--plum-dark)', fontWeight: 400, whiteSpace: 'nowrap' }}>
+                          {d.firstName} {d.surname}
+                        </td>
+                        <td style={{ padding: '10px 14px', color: '#666', whiteSpace: 'nowrap' }}>{d.email || '—'}</td>
+                        <td style={{ padding: '10px 14px', color: '#666', whiteSpace: 'nowrap' }}>{d.phone?.full || d.phone || '—'}</td>
+                        <td style={{ padding: '10px 14px', color: '#666', whiteSpace: 'nowrap' }}>{d.nationality || '—'}</td>
+                        <td style={{ padding: '10px 14px', color: '#666', whiteSpace: 'nowrap' }}>
+                          {d.sizingValue ? `${d.sizingValue} (${d.sizingSystem})` : '—'}
+                        </td>
+                        <td style={{ padding: '10px 14px', color: '#666' }}>
+                          {(d.styles || []).join(', ') || '—'}
+                        </td>
+                        <td style={{ padding: '10px 14px', color: '#aaa', whiteSpace: 'nowrap', fontSize: 11 }}>
+                          {new Date(r.submitted_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
 
