@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import {
-  Btn, Card, Field, TextInput, Select, OptionItem, MultiTag,
+  Btn, Card, Field, TextInput, OptionItem, MultiTag,
   StyleCard, BrandTag, StepLabel, StepQuestion, NavBtns,
   ProgressBar, ReviewRow, Divider,
 } from './components';
 import PhoneInput from './components/PhoneInput.jsx';
+import NationalityInput from './components/NationalityInput.jsx';
 import {
   STYLES_FEMALE, STYLES_MALE, CATEGORIES, PURPOSES,
   PS_MODES, LIFESTYLE, TRAVEL_OPTIONS, EVENT_OPTIONS,
-  NATIONALITIES, SIZING_MAP, SIZING_VALUES,
+  SIZING_MAP, SIZING_VALUES,
 } from './data';
 
 const TOTAL_STEPS = 13;
@@ -202,9 +203,9 @@ export default function SurveyForm({ onComplete }) {
         {t(lang, 'Where are you from?', "D'où venez-vous ?")}
       </div>
       <Field label={t(lang, 'Nationality', 'Nationalité')}>
-        <Select
-          value={form.nationality} onChange={v => { set('nationality', v); set('sizingSystem', SIZING_MAP[v] || 'EU'); }}
-          options={NATIONALITIES.map(n => ({ value: n, label: n }))}
+        <NationalityInput
+          value={form.nationality}
+          onChange={v => { set('nationality', v); set('sizingSystem', SIZING_MAP[v] || 'EU'); }}
           placeholder={t(lang, 'Select country', 'Sélectionner')}
         />
       </Field>
