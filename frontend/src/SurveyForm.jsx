@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Btn, Card, Field, TextInput, Select, OptionItem, MultiTag,
   StyleCard, BrandTag, StepLabel, StepQuestion, NavBtns,
   ProgressBar, ReviewRow, Divider,
 } from './components';
+import PhoneInput from './components/PhoneInput.jsx';
 import {
   STYLES_FEMALE, STYLES_MALE, CATEGORIES, PURPOSES,
   PS_MODES, LIFESTYLE, TRAVEL_OPTIONS, EVENT_OPTIONS,
@@ -220,7 +221,7 @@ export default function SurveyForm({ onComplete }) {
       <StepLabel>{t(lang, 'Step 3 of 13', 'Étape 3 sur 13')}</StepLabel>
       <StepQuestion>{t(lang, 'Your contact number', 'Votre numéro de contact')}</StepQuestion>
       <Field label={t(lang, 'Phone Number', 'Téléphone')} hint={t(lang, 'Optional — for membership & PS coordination', 'Optionnel — adhésion et coordination PS')}>
-        <TextInput value={form.phone} onChange={v => set('phone', v)} placeholder="+33 6 XX XX XX XX" />
+        <PhoneInput value={form.phone} onChange={v => set('phone', v)} />
       </Field>
       <NavBtns onBack={back} onNext={next} backLabel={t(lang, '← Back', '← Retour')} nextLabel={t(lang, 'Continue →', 'Continuer →')} />
     </Wrapper>
@@ -443,7 +444,7 @@ export default function SurveyForm({ onComplete }) {
           <ReviewRow k={t(lang, 'Full Name', 'Nom complet')} v={`${form.firstName} ${form.surname}`} />
           <ReviewRow k={t(lang, 'Initials', 'Initiales')} v={(form.firstName[0] + form.surname[0]).toUpperCase()} />
           <ReviewRow k="Email" v={form.email} />
-          <ReviewRow k={t(lang, 'Phone', 'Téléphone')} v={form.phone} />
+          <ReviewRow k={t(lang, 'Phone', 'Téléphone')} v={form.phone?.full || form.phone || '—'} />
           <ReviewRow k={t(lang, 'Address as', 'Civilité')} v={form.gender} />
           <ReviewRow k={t(lang, 'Nationality', 'Nationalité')} v={form.nationality} />
           <ReviewRow k={t(lang, 'Sizing', 'Taille')} v={form.sizingValue ? `${form.sizingValue} (${sys})` : '—'} />
