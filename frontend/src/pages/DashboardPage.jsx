@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FormCard from '../components/FormCard.jsx';
+import AdminNav from '../components/AdminNav.jsx';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
@@ -12,56 +13,20 @@ export default function DashboardPage() {
   const navigate = useNavigate();
 
   const token = getToken();
-  const user = (() => {
-    try { return JSON.parse(atob(token.split('.')[1])); } catch { return null; }
-  })();
 
   useEffect(() => {
     fetch(`${API}/api/forms`, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.json())
       .then(d => { if (d.success) setForms(d.data); })
       .finally(() => setLoading(false));
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem('lvv_token');
-    navigate('/login');
-  };
+  }, [token]);
 
   const activeForms = forms.filter(f => f.is_active);
   const totalResponses = forms.reduce((sum, f) => sum + Number(f.response_count ?? 0), 0);
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--beige)', display: 'flex', flexDirection: 'column' }}>
-      {/* NAV */}
-      <nav style={{
-        background: 'linear-gradient(135deg, var(--plum-dark) 0%, var(--plum) 100%)',
-        display: 'flex', alignItems: 'center', padding: '0 2rem',
-        height: 56, flexShrink: 0,
-        borderBottom: '1px solid rgba(255,255,255,0.08)',
-      }}>
-        <div style={{
-          fontFamily: 'var(--font-display)', fontSize: 16,
-          color: 'var(--beige)', marginRight: 'auto', letterSpacing: '0.02em',
-        }}>
-          La Vallée Village
-        </div>
-        <div style={{ fontSize: 12, color: 'rgba(245,240,230,0.6)', marginRight: 20, fontWeight: 300 }}>
-          {user?.email}
-        </div>
-        <div
-          onClick={handleLogout}
-          style={{
-            fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em',
-            cursor: 'pointer', color: 'rgba(245,240,230,0.45)',
-            transition: 'color 0.2s',
-          }}
-          onMouseEnter={e => e.currentTarget.style.color = 'rgba(245,240,230,0.8)'}
-          onMouseLeave={e => e.currentTarget.style.color = 'rgba(245,240,230,0.45)'}
-        >
-          Sign out
-        </div>
-      </nav>
+      <AdminNav active="forms" />
 
       <div style={{ flex: 1, padding: '2.5rem 2rem', maxWidth: 1100, margin: '0 auto', width: '100%' }}>
         {/* Header */}

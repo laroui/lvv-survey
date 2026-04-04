@@ -7,8 +7,10 @@ import formsRouter from './routes/forms.js';
 import partnersRouter from './routes/partners.js';
 import responsesRouter from './routes/responses.js';
 import { errorHandler } from './middleware/errorHandler.js';
+import { runMigrations } from './migrations.js';
 
 dotenv.config();
+runMigrations().catch(err => console.error('[migrations] Failed:', err));
 
 const app = express();
 
