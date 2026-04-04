@@ -56,12 +56,8 @@ html, body, #root {
   -webkit-font-smoothing: antialiased;
 }
 
-/* scrollbar */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--beige-mid); }
 ::-webkit-scrollbar-thumb { background: var(--beige-dark); border-radius: 3px; }
 
-/* base inputs */
-input, select, textarea, button {
-  font-family: var(--font-sans);
-}
+input, select, textarea, button { font-family: var(--font-sans); }

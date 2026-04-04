@@ -17,7 +17,7 @@ function saveResponses(data) {
 export default function App() {
   const [page, setPage] = useState('survey');
   const [responses, setResponses] = useState(loadResponses);
-  const [surveyState, setSurveyState] = useState('start'); // 'start' | 'thanks'
+  const [surveyState, setSurveyState] = useState('start');
   const [thanksData, setThanksData] = useState(null);
 
   const handleComplete = (entry, firstName, lang) => {
@@ -57,24 +57,21 @@ export default function App() {
         borderBottom: '1px solid rgba(255,255,255,0.08)',
       }}>
         <div style={{
-          marginRight: 'auto', fontFamily: 'var(--font-display)',
+          marginRight: 'auto',
+          fontFamily: 'var(--font-display)',
           fontSize: 16, color: 'var(--beige)', fontWeight: 400,
           letterSpacing: '0.02em',
         }}>
           La Vallée Village <span style={{ color: 'var(--gold)', margin: '0 6px', fontWeight: 100 }}>×</span> Peninsula
         </div>
         {navItems.map(item => (
-          <div
-            key={item.id}
-            onClick={() => setPage(item.id)}
-            style={{
-              padding: '0 1.5rem', height: 56, display: 'flex', alignItems: 'center',
-              fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em',
-              cursor: 'pointer', fontWeight: 400, transition: 'all 0.2s',
-              color: page === item.id ? 'var(--beige)' : 'rgba(245,240,230,0.45)',
-              borderBottom: `2px solid ${page === item.id ? 'var(--gold)' : 'transparent'}`,
-            }}
-          >
+          <div key={item.id} onClick={() => setPage(item.id)} style={{
+            padding: '0 1.5rem', height: 56, display: 'flex', alignItems: 'center',
+            fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em',
+            cursor: 'pointer', fontWeight: 400, transition: 'all 0.2s',
+            color: page === item.id ? 'var(--beige)' : 'rgba(245,240,230,0.45)',
+            borderBottom: `2px solid ${page === item.id ? 'var(--gold)' : 'transparent'}`,
+          }}>
             {item.label}
           </div>
         ))}
@@ -84,9 +81,7 @@ export default function App() {
       <div style={{ flex: 1, overflow: 'auto' }}>
         {page === 'survey' && (
           <>
-            {surveyState === 'start' && (
-              <SurveyForm onComplete={handleComplete} />
-            )}
+            {surveyState === 'start' && <SurveyForm onComplete={handleComplete} />}
             {surveyState === 'thanks' && thanksData && (
               <div style={{ maxWidth: 480, margin: '5rem auto', textAlign: 'center', padding: '0 2rem' }}>
                 <div style={{
@@ -94,9 +89,7 @@ export default function App() {
                   background: 'rgba(201,168,76,0.12)', border: '1px solid rgba(201,168,76,0.3)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   margin: '0 auto 2rem', fontSize: 28,
-                }}>
-                  ✦
-                </div>
+                }}>✦</div>
                 <div style={{ fontFamily: 'var(--font-display)', fontSize: 36, fontWeight: 400, color: 'var(--plum-dark)', marginBottom: 12, letterSpacing: '0.01em' }}>
                   {t(thanksData.lang, `Thank you, ${thanksData.firstName}.`, `Merci, ${thanksData.firstName}.`)}
                 </div>
@@ -109,15 +102,12 @@ export default function App() {
                 <div style={{ fontSize: 12, fontStyle: 'italic', color: 'var(--text-hint)', marginBottom: 36 }}>
                   La Vallée Village × The Peninsula Paris
                 </div>
-                <button
-                  onClick={handleNewResponse}
-                  style={{
-                    padding: '11px 28px', border: '1px solid var(--plum)', borderRadius: 'var(--radius-md)',
-                    background: 'transparent', color: 'var(--plum)', fontSize: 12,
-                    cursor: 'pointer', fontFamily: 'var(--font-sans)',
-                    letterSpacing: '0.06em', textTransform: 'uppercase', fontWeight: 400,
-                  }}
-                >
+                <button onClick={handleNewResponse} style={{
+                  padding: '11px 28px', border: '1px solid var(--plum)', borderRadius: 'var(--radius-md)',
+                  background: 'transparent', color: 'var(--plum)', fontSize: 12,
+                  cursor: 'pointer', fontFamily: 'var(--font-sans)',
+                  letterSpacing: '0.06em', textTransform: 'uppercase', fontWeight: 400,
+                }}>
                   New Response
                 </button>
               </div>
