@@ -12,6 +12,7 @@ const app = express();
 const allowedOrigins = [
   'http://localhost:5173',
   'https://lvv-survey.vercel.app',
+  'https://lvv-survey-production-d4a4.up.railway.app',
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 
