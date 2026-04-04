@@ -107,5 +107,12 @@ export default function PublicSurveyPage() {
     </div>
   );
 
-  return <SurveyForm onComplete={handleComplete} config={formData?.config} />;
+  return (
+    <SurveyForm
+      onComplete={handleComplete}
+      config={formData?.config}
+      partnerName={formData?.partner_name}
+      partnerLogoUrl={formData?.partner_logo_url}
+    />
+  );
 }

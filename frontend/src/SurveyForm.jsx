@@ -42,8 +42,8 @@ function Wrapper({ pct, hotelName, children }) {
   );
 }
 
-export default function SurveyForm({ onComplete, config = {} }) {
-  const hotelName       = config?.hotelName  || 'The Peninsula Paris';
+export default function SurveyForm({ onComplete, config = {}, partnerName, partnerLogoUrl }) {
+  const hotelName       = config?.hotelName  || partnerName || 'The Peninsula Paris';
   const stylesFemale    = config?.styles?.female || STYLES_FEMALE;
   const stylesMale      = config?.styles?.male   || STYLES_MALE;
   const configCats      = config?.categories     || CATEGORIES;
@@ -121,31 +121,77 @@ export default function SurveyForm({ onComplete, config = {} }) {
 
   /* ── START SCREEN ── */
   if (step === -1) {
+    const displayPartner = partnerName || hotelName;
     return (
-      <div style={{ maxWidth: 460, margin: '3rem auto', padding: '0 1.5rem' }}>
-        <div style={{
-          background: 'linear-gradient(160deg, var(--plum-dark) 0%, var(--plum) 100%)',
-          borderRadius: 'var(--radius-xl)', padding: '3.5rem 2.5rem 3rem',
-          color: 'var(--beige)', textAlign: 'center', marginBottom: 24,
-        }}>
-          <div style={{ fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(245,240,230,0.5)', marginBottom: 12, fontWeight: 300 }}>
-            La Vallée Village × {hotelName}
-          </div>
-          <div style={{ fontFamily: 'var(--font-display)', fontSize: 46, fontWeight: 400, lineHeight: 1.15, marginBottom: 20, letterSpacing: '0.01em' }}>
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(175deg, #2a1520 0%, #3d1f2e 35%, #52384a 70%, #3a2233 100%)',
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        padding: '3rem 2rem',
+        boxSizing: 'border-box',
+      }}>
+        {/* Main content */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', width: '100%', maxWidth: 400 }}>
+          <div style={{
+            fontFamily: 'var(--font-display)', fontSize: 'clamp(42px, 10vw, 56px)',
+            fontWeight: 400, lineHeight: 1.15, color: 'var(--beige)',
+            marginBottom: 28, letterSpacing: '0.01em',
+          }}>
             Pre-Arrival<br />Survey
           </div>
-          <div style={{ fontSize: 14, fontWeight: 300, color: 'rgba(245,240,230,0.75)', lineHeight: 1.7, marginBottom: 8 }}>
-            We would love to tailor your<br />shopping and styling experience to you!
+          <div style={{ fontSize: 15, fontWeight: 300, color: 'rgba(245,240,230,0.75)', lineHeight: 1.75, marginBottom: 6, maxWidth: 300 }}>
+            We would love to tailor your shopping and styling experience to you!
           </div>
-          <div style={{ fontSize: 12, fontStyle: 'italic', color: 'rgba(245,240,230,0.4)', marginBottom: 36 }}>
-            It will only take up to 3 min.
+          <div style={{ fontSize: 13, fontStyle: 'italic', color: 'rgba(245,240,230,0.4)', marginBottom: 48 }}>
+            It will only take up to 3min.
           </div>
-          <Btn variant="gold" size="lg" style={{ width: '100%' }} onClick={() => setStep(0)}>
+          <button
+            onClick={() => setStep(0)}
+            style={{
+              padding: '15px 60px', borderRadius: 50,
+              background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.18)',
+              color: 'rgba(245,240,230,0.95)', fontSize: 15, letterSpacing: '0.06em',
+              fontFamily: 'var(--font-sans)', cursor: 'pointer',
+              backdropFilter: 'blur(4px)',
+              transition: 'background 0.2s',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.2)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; }}
+          >
             Start
-          </Btn>
+          </button>
         </div>
-        <div style={{ textAlign: 'center', fontSize: 10, letterSpacing: '0.14em', color: 'var(--text-hint)', textTransform: 'uppercase' }}>
-          Available in English · Français
+
+        {/* Logo footer */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20, paddingTop: '2.5rem' }}>
+          {/* LVV */}
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: 13, letterSpacing: '0.05em', color: 'rgba(245,240,230,0.9)', fontWeight: 400, fontFamily: 'var(--font-sans)' }}>
+              La Vallée Village
+            </div>
+            <div style={{ fontSize: 8, letterSpacing: '0.18em', color: 'rgba(245,240,230,0.35)', textTransform: 'uppercase', marginTop: 3, fontFamily: 'var(--font-sans)' }}>
+              The Bicester Collection
+            </div>
+          </div>
+
+          {/* × separator */}
+          <div style={{ fontSize: 18, color: 'rgba(245,240,230,0.4)', fontWeight: 300, lineHeight: 1 }}>×</div>
+
+          {/* Partner */}
+          <div style={{ textAlign: 'center' }}>
+            {partnerLogoUrl ? (
+              <img
+                src={partnerLogoUrl} alt={displayPartner}
+                style={{ height: 28, filter: 'brightness(0) invert(1)', opacity: 0.85, display: 'block', margin: '0 auto' }}
+                onError={e => { e.target.style.display = 'none'; }}
+              />
+            ) : (
+              <div style={{ fontSize: 13, letterSpacing: '0.1em', color: 'rgba(245,240,230,0.9)', fontWeight: 400, textTransform: 'uppercase', fontFamily: 'var(--font-sans)' }}>
+                {displayPartner}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );

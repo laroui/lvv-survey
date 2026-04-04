@@ -9,7 +9,7 @@ function slugify(title) {
 }
 
 // GET /api/forms
-router.get('/', requireAuth, async (req, res, next) => {
+router.get('/', requireAuth, async (_req, res, next) => {
   try {
     const forms = await sql`
       SELECT f.*, p.name AS partner_name,
@@ -87,7 +87,7 @@ router.delete('/:id', requireAuth, async (req, res, next) => {
 router.get('/public/:token', async (req, res, next) => {
   try {
     const [form] = await sql`
-      SELECT f.config, f.theme, f.title, p.name AS partner_name
+      SELECT f.config, f.theme, f.title, p.name AS partner_name, p.logo_url AS partner_logo_url
       FROM forms f
       LEFT JOIN partners p ON p.id = f.partner_id
       WHERE f.public_url_token = ${req.params.token}
