@@ -16,14 +16,32 @@ export default function PublicSurveyPage() {
     fetch(`${API}/api/forms/public/${token}`)
       .then(r => r.json())
       .then(d => {
-        if (d.success) setFormData(d.data);
-        else setNotFound(true);
+        if (d.success) {
+          setFormData(d.data);
+          // Apply theme CSS variables
+          const theme = d.data.theme || {};
+          const root = document.documentElement;
+          if (theme.primaryColor)   root.style.setProperty('--plum', theme.primaryColor);
+          if (theme.accentColor)    root.style.setProperty('--gold', theme.accentColor);
+          if (theme.backgroundColor) root.style.setProperty('--beige', theme.backgroundColor);
+        } else {
+          setNotFound(true);
+        }
       })
       .catch(() => setNotFound(true))
       .finally(() => setLoading(false));
   }, [token]);
 
-  const handleComplete = (entry, firstName, lang) => {
+  const handleComplete = async (entry, firstName, lang) => {
+    try {
+      await fetch(`${API}/api/responses`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ formToken: token, data: entry }),
+      });
+    } catch (e) {
+      console.error('Failed to save response:', e);
+    }
     setThanksData({ firstName, lang });
     setSurveyState('thanks');
   };

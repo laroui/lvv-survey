@@ -5,6 +5,7 @@ import healthRouter from './routes/health.js';
 import authRouter from './routes/auth.js';
 import formsRouter from './routes/forms.js';
 import partnersRouter from './routes/partners.js';
+import responsesRouter from './routes/responses.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 dotenv.config();
@@ -31,6 +32,7 @@ app.use('/api', healthRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/forms', formsRouter);
 app.use('/api/partners', partnersRouter);
+app.use('/api/responses', responsesRouter);
 
 app.use(errorHandler);
 

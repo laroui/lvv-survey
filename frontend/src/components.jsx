@@ -163,30 +163,75 @@ export function MultiTag({ label, selected, onClick }) {
 }
 
 /* ── StyleCard ── */
-export function StyleCard({ name, brands, selected, onClick }) {
+export function StyleCard({ name, brands, selected, onClick, photoUrl }) {
   return (
     <div
       onClick={onClick}
       style={{
-        border: `2px solid ${selected ? 'var(--gold)' : 'var(--beige-dark)'}`,
-        borderRadius: 'var(--radius-md)', padding: '18px 16px',
-        cursor: 'pointer', transition: 'all 0.2s', position: 'relative',
-        background: selected ? 'var(--gold-light)' : 'var(--beige)',
+        position: 'relative',
+        aspectRatio: '1 / 1',
+        borderRadius: 'var(--radius-md)',
+        overflow: 'hidden',
+        border: `2.5px solid ${selected ? 'var(--gold)' : 'transparent'}`,
+        cursor: 'pointer',
+        transition: 'border-color 0.25s',
+        background: 'linear-gradient(135deg, var(--plum-dark), var(--plum))',
       }}
     >
+      {/* Photo */}
+      {photoUrl && (
+        <img
+          src={photoUrl}
+          alt={name}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+          onError={e => { e.target.style.display = 'none'; }}
+        />
+      )}
+      {/* Dark gradient overlay for legibility */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(to top, rgba(42,26,34,0.88) 0%, rgba(42,26,34,0.12) 55%, transparent 100%)',
+      }} />
+      {/* Gold tint when selected */}
       {selected && (
         <div style={{
-          position: 'absolute', top: 10, right: 10, width: 20, height: 20,
-          borderRadius: '50%', background: 'var(--gold)',
+          position: 'absolute', inset: 0,
+          background: 'rgba(201,168,76,0.16)',
+        }} />
+      )}
+      {/* Checkmark */}
+      {selected && (
+        <div style={{
+          position: 'absolute', top: 10, right: 10,
+          width: 22, height: 22, borderRadius: '50%',
+          background: 'var(--gold)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          color: '#fff', fontSize: 10, fontWeight: 700,
+          color: '#fff', fontSize: 11, fontWeight: 700,
         }}>✓</div>
       )}
-      <div style={{ fontFamily: 'var(--font-sans)', fontSize: 15, fontWeight: 400, color: 'var(--plum-dark)', marginBottom: 6 }}>
-        {name}
-      </div>
-      <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 300, lineHeight: 1.6 }}>
-        {brands.join(', ')}
+      {/* Style name + brands */}
+      <div style={{ position: 'absolute', bottom: 14, left: 14, right: 14 }}>
+        <div style={{
+          fontFamily: 'var(--font-display)',
+          fontStyle: 'italic',
+          fontSize: 18,
+          fontWeight: 400,
+          color: '#fff',
+          lineHeight: 1.2,
+          textShadow: '0 1px 4px rgba(0,0,0,0.4)',
+        }}>
+          {name}
+        </div>
+        <div style={{
+          fontSize: 10,
+          color: 'rgba(255,255,255,0.6)',
+          fontFamily: 'var(--font-sans)',
+          fontWeight: 300,
+          marginTop: 3,
+          lineHeight: 1.4,
+        }}>
+          {brands.slice(0, 3).join(' · ')}
+        </div>
       </div>
     </div>
   );

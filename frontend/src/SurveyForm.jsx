@@ -9,7 +9,7 @@ import NationalityInput from './components/NationalityInput.jsx';
 import {
   STYLES_FEMALE, STYLES_MALE, CATEGORIES, PURPOSES,
   PS_MODES, LIFESTYLE, TRAVEL_OPTIONS, EVENT_OPTIONS,
-  SIZING_MAP, SIZING_VALUES,
+  SIZING_MAP, SIZING_VALUES, // kept as fallbacks
 } from './data';
 
 const TOTAL_STEPS = 13;
@@ -20,20 +20,20 @@ function t(lang, en, fr) {
 
 /* ── SHARED LAYOUT — defined outside SurveyForm so they are stable
    component references across re-renders (prevents keyboard dismiss) ── */
-function Header() {
+function Header({ hotelName }) {
   return (
     <div style={{ textAlign: 'center', padding: '2rem 1.5rem 0' }}>
       <div style={{ fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 6, fontWeight: 300 }}>
-        La Vallée Village × The Peninsula Paris
+        La Vallée Village × {hotelName}
       </div>
     </div>
   );
 }
 
-function Wrapper({ pct, children }) {
+function Wrapper({ pct, hotelName, children }) {
   return (
     <>
-      <Header />
+      <Header hotelName={hotelName} />
       <div style={{ maxWidth: 640, margin: '0 auto', padding: '1.5rem 1.5rem 4rem' }}>
         <ProgressBar pct={pct} />
         {children}
@@ -42,7 +42,14 @@ function Wrapper({ pct, children }) {
   );
 }
 
-export default function SurveyForm({ onComplete }) {
+export default function SurveyForm({ onComplete, config = {} }) {
+  const hotelName = config?.hotelName || 'The Peninsula Paris';
+  const stylesFemale = config?.styles?.female || STYLES_FEMALE;
+  const stylesMale   = config?.styles?.male   || STYLES_MALE;
+  const configCats   = config?.categories     || CATEGORIES;
+  const configLife   = config?.lifestyle      || LIFESTYLE;
+  const configTravel = config?.travel         || TRAVEL_OPTIONS;
+  const configEvents = config?.events         || EVENT_OPTIONS;
   const [step, setStep] = useState(-1); // -1 = start screen
   const [lang, setLang] = useState('en');
   const [form, setForm] = useState({
@@ -76,10 +83,10 @@ export default function SurveyForm({ onComplete }) {
   const back = () => { setStep(s => s - 1); window.scrollTo(0, 0); };
   const pct = Math.round(((step + 1) / TOTAL_STEPS) * 100);
 
-  const stylePool = form.gender === 'Mr' ? STYLES_MALE : STYLES_FEMALE;
+  const stylePool = form.gender === 'Mr' ? stylesMale : stylesFemale;
 
   const getBrands = () => {
-    const pool = form.gender === 'Mr' ? STYLES_MALE : STYLES_FEMALE;
+    const pool = form.gender === 'Mr' ? stylesMale : stylesFemale;
     const rel = pool.filter(s => form.styles.includes(s.id));
     return [...new Set(rel.flatMap(s => s.brands))];
   };
@@ -87,7 +94,7 @@ export default function SurveyForm({ onComplete }) {
   const getSizingSystem = () => SIZING_MAP[form.nationality] || 'EU';
 
   const getStyleName = (id) => {
-    const pool = form.gender === 'Mr' ? STYLES_MALE : STYLES_FEMALE;
+    const pool = form.gender === 'Mr' ? stylesMale : stylesFemale;
     const s = pool.find(x => x.id === id);
     return s ? (lang === 'fr' ? s.nameFR : s.nameEN) : id;
   };
@@ -120,7 +127,7 @@ export default function SurveyForm({ onComplete }) {
           color: 'var(--beige)', textAlign: 'center', marginBottom: 24,
         }}>
           <div style={{ fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(245,240,230,0.5)', marginBottom: 12, fontWeight: 300 }}>
-            La Vallée Village × The Peninsula Paris
+            La Vallée Village × {hotelName}
           </div>
           <div style={{ fontFamily: 'var(--font-display)', fontSize: 46, fontWeight: 400, lineHeight: 1.15, marginBottom: 20, letterSpacing: '0.01em' }}>
             Pre-Arrival<br />Survey
@@ -145,7 +152,7 @@ export default function SurveyForm({ onComplete }) {
 
   /* ── STEP 0: LANGUAGE ── */
   if (step === 0) return (
-    <Wrapper pct={pct}>
+    <Wrapper pct={pct} hotelName={hotelName}>
       <StepLabel>Language / Langue</StepLabel>
       <StepQuestion>Please choose your preferred language</StepQuestion>
       <div style={{ display: 'flex', gap: 0, border: '1px solid var(--beige-dark)', borderRadius: 'var(--radius-md)', overflow: 'hidden', width: 'fit-content', marginBottom: 32 }}>
@@ -169,7 +176,7 @@ export default function SurveyForm({ onComplete }) {
 
   /* ── STEP 1: IDENTITY ── */
   if (step === 1) return (
-    <Wrapper pct={pct}>
+    <Wrapper pct={pct} hotelName={hotelName}>
       <StepLabel>{t(lang, 'Step 1 of 13', 'Étape 1 sur 13')}</StepLabel>
       <StepQuestion>{t(lang, 'How should we call you?', 'Comment vous appeler ?')}</StepQuestion>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
@@ -197,7 +204,7 @@ export default function SurveyForm({ onComplete }) {
 
   /* ── STEP 2: GENDER + NATIONALITY ── */
   if (step === 2) return (
-    <Wrapper pct={pct}>
+    <Wrapper pct={pct} hotelName={hotelName}>
       <StepLabel>{t(lang, 'Step 2 of 13', 'Étape 2 sur 13')}</StepLabel>
       <StepQuestion>{t(lang, 'How should we address you?', 'Comment vous adresser ?')}</StepQuestion>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 28 }}>
@@ -224,7 +231,7 @@ export default function SurveyForm({ onComplete }) {
 
   /* ── STEP 3: PHONE ── */
   if (step === 3) return (
-    <Wrapper pct={pct}>
+    <Wrapper pct={pct} hotelName={hotelName}>
       <StepLabel>{t(lang, 'Step 3 of 13', 'Étape 3 sur 13')}</StepLabel>
       <StepQuestion>{t(lang, 'Your contact number', 'Votre numéro de contact')}</StepQuestion>
       <Field label={t(lang, 'Phone Number', 'Téléphone')} hint={t(lang, 'Optional — for membership & PS coordination', 'Optionnel — adhésion et coordination PS')}>
@@ -239,7 +246,7 @@ export default function SurveyForm({ onComplete }) {
     const sys = getSizingSystem();
     const sizes = SIZING_VALUES[sys] || SIZING_VALUES.EU;
     return (
-      <Wrapper pct={pct}>
+      <Wrapper pct={pct} hotelName={hotelName}>
         <StepLabel>{t(lang, 'Step 4 of 13', 'Étape 4 sur 13')}</StepLabel>
         <StepQuestion>{t(lang, 'What is your sizing?', 'Quelle est votre taille ?')}</StepQuestion>
         <div style={{ marginBottom: 16, padding: '8px 14px', background: 'var(--beige-mid)', borderRadius: 'var(--radius-sm)', fontSize: 12, color: 'var(--text-muted)' }}>
@@ -269,7 +276,7 @@ export default function SurveyForm({ onComplete }) {
 
   /* ── STEP 5: PURPOSE ── */
   if (step === 5) return (
-    <Wrapper pct={pct}>
+    <Wrapper pct={pct} hotelName={hotelName}>
       <StepLabel>{t(lang, 'Step 5 of 13', 'Étape 5 sur 13')}</StepLabel>
       <StepQuestion>{t(lang, 'What brings you to this experience?', "Qu'est-ce qui vous amène ?")}</StepQuestion>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -289,7 +296,7 @@ export default function SurveyForm({ onComplete }) {
 
   /* ── STEP 6: PS MODE ── */
   if (step === 6) return (
-    <Wrapper pct={pct}>
+    <Wrapper pct={pct} hotelName={hotelName}>
       <StepLabel>{t(lang, 'Step 6 of 13', 'Étape 6 sur 13')}</StepLabel>
       <StepQuestion>{t(lang, 'How would you like your Personal Shopper experience?', 'Comment souhaitez-vous être accompagné(e) ?')}</StepQuestion>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -304,7 +311,7 @@ export default function SurveyForm({ onComplete }) {
 
   /* ── STEP 7: STYLE ── */
   if (step === 7) return (
-    <Wrapper pct={pct}>
+    <Wrapper pct={pct} hotelName={hotelName}>
       <StepLabel>
         {form.gender === 'Mr'
           ? t(lang, 'Step 7 of 13 — Q12b Male Style Profile', 'Étape 7 sur 13 — Q12b Profil masculin')
@@ -322,6 +329,7 @@ export default function SurveyForm({ onComplete }) {
             brands={s.brands}
             selected={form.styles.includes(s.id)}
             onClick={() => toggleArrMax('styles', s.id, 2)}
+            photoUrl={s.photoUrl}
           />
         ))}
       </div>
@@ -332,14 +340,14 @@ export default function SurveyForm({ onComplete }) {
 
   /* ── STEP 8: CATEGORIES ── */
   if (step === 8) return (
-    <Wrapper pct={pct}>
+    <Wrapper pct={pct} hotelName={hotelName}>
       <StepLabel>{t(lang, 'Step 8 of 13', 'Étape 8 sur 13')}</StepLabel>
       <StepQuestion>{t(lang, "Are there any categories you'd love us to prepare?", 'Y a-t-il des catégories que vous souhaitez ?')}</StepQuestion>
       <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 16 }}>
         {t(lang, 'Choose as many as you like', 'Choisissez autant que vous souhaitez')}
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-        {CATEGORIES.map(c => (
+        {configCats.map(c => (
           <MultiTag
             key={c.id} label={t(lang, c.labelEN, c.labelFR)}
             selected={form.categories.includes(c.id)}
@@ -355,7 +363,7 @@ export default function SurveyForm({ onComplete }) {
   if (step === 9) {
     const brands = getBrands();
     return (
-      <Wrapper pct={pct}>
+      <Wrapper pct={pct} hotelName={hotelName}>
         <StepLabel>{t(lang, 'Step 9 of 13', 'Étape 9 sur 13')}</StepLabel>
         <StepQuestion>{t(lang, 'Any favorite brands you gravitate toward? (up to 2)', 'Des marques préférées ? (2 max)')}</StepQuestion>
         <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 16 }}>
@@ -386,11 +394,11 @@ export default function SurveyForm({ onComplete }) {
 
   /* ── STEP 10: LIFESTYLE ── */
   if (step === 10) return (
-    <Wrapper pct={pct}>
+    <Wrapper pct={pct} hotelName={hotelName}>
       <StepLabel>{t(lang, 'Step 10 of 13', 'Étape 10 sur 13')}</StepLabel>
       <StepQuestion>{t(lang, 'Which categories fit your lifestyle?', 'Quelles catégories correspondent à votre style de vie ?')}</StepQuestion>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-        {LIFESTYLE.map(l => (
+        {configLife.map(l => (
           <MultiTag key={l.id} label={t(lang, l.labelEN, l.labelFR)} selected={form.lifestyle.includes(l.id)} onClick={() => toggleArr('lifestyle', l.id)} />
         ))}
       </div>
@@ -400,11 +408,11 @@ export default function SurveyForm({ onComplete }) {
 
   /* ── STEP 11: TRAVEL ── */
   if (step === 11) return (
-    <Wrapper pct={pct}>
+    <Wrapper pct={pct} hotelName={hotelName}>
       <StepLabel>{t(lang, 'Step 11 of 13', 'Étape 11 sur 13')}</StepLabel>
       <StepQuestion>{t(lang, 'Any upcoming vacation?', 'Un voyage prévu ?')}</StepQuestion>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 24 }}>
-        {TRAVEL_OPTIONS.map(o => (
+        {configTravel.map(o => (
           <MultiTag key={o.id} label={t(lang, o.labelEN, o.labelFR)} selected={form.travel.includes(o.id)} onClick={() => toggleArr('travel', o.id)} />
         ))}
       </div>
@@ -417,11 +425,11 @@ export default function SurveyForm({ onComplete }) {
 
   /* ── STEP 12: EVENTS ── */
   if (step === 12) return (
-    <Wrapper pct={pct}>
+    <Wrapper pct={pct} hotelName={hotelName}>
       <StepLabel>{t(lang, 'Step 12 of 13', 'Étape 12 sur 13')}</StepLabel>
       <StepQuestion>{t(lang, 'Any upcoming events?', 'Un événement à venir ?')}</StepQuestion>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 24 }}>
-        {EVENT_OPTIONS.map(o => (
+        {configEvents.map(o => (
           <MultiTag key={o.id} label={t(lang, o.labelEN, o.labelFR)} selected={form.events.includes(o.id)} onClick={() => toggleArr('events', o.id)} />
         ))}
       </div>
@@ -436,15 +444,15 @@ export default function SurveyForm({ onComplete }) {
   if (step === 13) {
     const sys = getSizingSystem();
     const styleNames = form.styles.map(id => getStyleName(id)).join(', ');
-    const catLabels = form.categories.map(id => { const c = CATEGORIES.find(x => x.id === id); return c ? t(lang, c.labelEN, c.labelFR) : id; }).join(', ');
-    const lifeLabels = form.lifestyle.map(id => { const l = LIFESTYLE.find(x => x.id === id); return l ? t(lang, l.labelEN, l.labelFR) : id; }).join(', ');
+    const catLabels = form.categories.map(id => { const c = configCats.find(x => x.id === id); return c ? t(lang, c.labelEN, c.labelFR) : id; }).join(', ');
+    const lifeLabels = form.lifestyle.map(id => { const l = configLife.find(x => x.id === id); return l ? t(lang, l.labelEN, l.labelFR) : id; }).join(', ');
     const purposeLabel = PURPOSES.find(p => p.id === form.purpose)?.[lang === 'fr' ? 'labelFR' : 'labelEN'] || '—';
     const psModeLabel = PS_MODES.find(p => p.id === form.psMode)?.[lang === 'fr' ? 'labelFR' : 'labelEN'] || '—';
-    const travelLabels = [...form.travel.map(id => TRAVEL_OPTIONS.find(x => x.id === id)?.[lang === 'fr' ? 'labelFR' : 'labelEN'] || id), form.travelCustom].filter(Boolean).join(', ');
-    const eventLabels = [...form.events.map(id => EVENT_OPTIONS.find(x => x.id === id)?.[lang === 'fr' ? 'labelFR' : 'labelEN'] || id), form.eventCustom].filter(Boolean).join(', ');
+    const travelLabels = [...form.travel.map(id => configTravel.find(x => x.id === id)?.[lang === 'fr' ? 'labelFR' : 'labelEN'] || id), form.travelCustom].filter(Boolean).join(', ');
+    const eventLabels = [...form.events.map(id => configEvents.find(x => x.id === id)?.[lang === 'fr' ? 'labelFR' : 'labelEN'] || id), form.eventCustom].filter(Boolean).join(', ');
 
     return (
-      <Wrapper pct={pct}>
+      <Wrapper pct={pct} hotelName={hotelName}>
         <StepLabel>{t(lang, 'Step 13 of 13 — Review', 'Étape 13 sur 13 — Récapitulatif')}</StepLabel>
         <StepQuestion>{t(lang, 'Review your profile', 'Vérifiez votre profil')}</StepQuestion>
         <Card style={{ marginBottom: 20 }}>
