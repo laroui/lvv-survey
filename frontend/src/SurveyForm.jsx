@@ -291,31 +291,42 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
   }
 
   /* ── STEP 0: LANGUAGE ── */
-  if (step === 0) return (
-    <Wrapper pct={pct} hotelName={hotelName} {...wp}>
-      <StepLabel>Language / Langue</StepLabel>
-      <StepQuestion>Please choose your preferred language</StepQuestion>
-      <div style={{ display: 'flex', gap: 0, border: '1px solid var(--beige-dark)', borderRadius: 'var(--radius-md)', overflow: 'hidden', width: 'fit-content', marginBottom: 32 }}>
-        {['en', 'fr'].map(l => (
-          <div key={l} onClick={() => setLang(l)} style={{
-            padding: '12px 32px', fontSize: 13, fontWeight: 400,
-            cursor: 'pointer', transition: 'all 0.2s',
-            textTransform: 'uppercase', letterSpacing: '0.08em',
-            background: lang === l ? 'var(--plum)' : 'var(--beige)',
-            color: lang === l ? 'var(--beige)' : 'var(--text-muted)',
-            touchAction: 'manipulation',
-          }}>
-            {l === 'en' ? 'English' : 'Français'}
-          </div>
-        ))}
-      </div>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: 24, borderTop: '1px solid var(--beige-mid)' }}>
-        <Btn variant="primary" onClick={next}>
-          {t(lang, 'Continue →', 'Continuer →', 'Continuar →', '→ متابعة')}
-        </Btn>
-      </div>
-    </Wrapper>
-  );
+  if (step === 0) {
+    const LANGS = [
+      { code: 'en', label: 'English' },
+      { code: 'fr', label: 'Français' },
+      { code: 'es', label: 'Español' },
+      { code: 'ar', label: 'العربية' },
+    ];
+    return (
+      <Wrapper pct={pct} hotelName={hotelName} {...wp}>
+        <StepLabel>Language / Langue / Idioma / اللغة</StepLabel>
+        <StepQuestion>Please choose your preferred language</StepQuestion>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 32 }}>
+          {LANGS.map(l => (
+            <div key={l.code} onClick={() => setLang(l.code)} style={{
+              padding: '14px 20px', fontSize: 14, fontWeight: 400,
+              cursor: 'pointer', transition: 'all 0.2s',
+              borderRadius: 'var(--radius-md)',
+              border: `1.5px solid ${lang === l.code ? 'var(--plum)' : 'var(--beige-dark)'}`,
+              background: lang === l.code ? 'var(--plum)' : 'var(--beige)',
+              color: lang === l.code ? 'var(--beige)' : 'var(--text-muted)',
+              textAlign: 'center',
+              touchAction: 'manipulation',
+              transform: lang === l.code ? 'scale(1.02)' : 'scale(1)',
+            }}>
+              {l.label}
+            </div>
+          ))}
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: 24, borderTop: '1px solid var(--beige-mid)' }}>
+          <Btn variant="primary" onClick={next}>
+            {t(lang, 'Continue →', 'Continuer →', 'Continuar →', '→ متابعة')}
+          </Btn>
+        </div>
+      </Wrapper>
+    );
+  }
 
   /* ── STEP 1: IDENTITY ── */
   if (step === 1) return (
