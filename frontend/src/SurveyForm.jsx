@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Btn, Card, Field, TextInput, OptionItem, MultiTag,
   StyleCard, BrandTag, StepLabel, StepQuestion, NavBtns,
@@ -13,6 +13,54 @@ import {
 } from './data';
 
 const TOTAL_STEPS = 13;
+const API = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
+function genId() {
+  return (crypto.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`);
+}
+
+function collectDeviceInfo() {
+  const ua = navigator.userAgent;
+  const isIOS     = /iPhone|iPad|iPod/i.test(ua);
+  const isAndroid = /Android/i.test(ua);
+  const isMac     = /Mac/i.test(navigator.platform) && !isIOS;
+  const isWindows = /Win/i.test(navigator.platform);
+  const isMobile  = /Mobile|Android|iPhone/i.test(ua);
+  const isTablet  = /iPad|Tablet/i.test(ua) || (/Android/i.test(ua) && !/Mobile/i.test(ua));
+  const isChrome  = /Chrome/i.test(ua) && !/Edge|Edg|OPR/i.test(ua);
+  const isSafari  = /Safari/i.test(ua) && !/Chrome/i.test(ua);
+  const isFirefox = /Firefox/i.test(ua);
+  const isEdge    = /Edge|Edg/i.test(ua);
+  const conn      = navigator.connection;
+  return {
+    os:               isIOS ? 'iOS' : isAndroid ? 'Android' : isMac ? 'macOS' : isWindows ? 'Windows' : navigator.platform || 'Unknown',
+    browser:          isChrome ? 'Chrome' : isSafari ? 'Safari' : isFirefox ? 'Firefox' : isEdge ? 'Edge' : 'Other',
+    deviceType:       isMobile ? 'Mobile' : isTablet ? 'Tablet' : 'Desktop',
+    screenWidth:      screen.width,
+    screenHeight:     screen.height,
+    viewportWidth:    window.innerWidth,
+    viewportHeight:   window.innerHeight,
+    devicePixelRatio: window.devicePixelRatio ?? 1,
+    language:         navigator.language,
+    timezone:         Intl.DateTimeFormat().resolvedOptions().timeZone,
+    touchSupport:     'ontouchstart' in window,
+    connection:       conn ? { type: conn.effectiveType, downlink: conn.downlink } : null,
+    referrer:         document.referrer || null,
+    userAgent:        ua,
+    collectedAt:      new Date().toISOString(),
+  };
+}
+
+const DEFAULT_FORM = {
+  firstName: '', surname: '', email: '', phone: '',
+  gender: '', nationality: '',
+  sizingSystem: 'EU', sizingValue: '',
+  purpose: '', psMode: '',
+  styles: [], categories: [], brands: [], lifestyle: [],
+  travel: [], travelCustom: '',
+  events: [], eventCustom: '',
+  consent: false,
+};
 
 // 4-language helper: en / fr / es / ar — falls back to English
 function t(lang, en, fr, es, ar) {
@@ -65,7 +113,7 @@ function Wrapper({ pct, hotelName, children, rtl, stepKey }) {
   );
 }
 
-export default function SurveyForm({ onComplete, config = {}, partnerName, partnerLogoUrl }) {
+export default function SurveyForm({ onComplete, config = {}, partnerName, partnerLogoUrl, formToken }) {
   const hotelName       = config?.hotelName  || partnerName || 'The Peninsula Paris';
   const stylesFemale    = (config?.styles?.female || STYLES_FEMALE).map(s => ({
     ...s, photoUrl: s.photoUrl || STYLES_FEMALE.find(d => d.id === s.id)?.photoUrl || null,
@@ -80,19 +128,52 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
   const configTravel    = config?.travel         || TRAVEL_OPTIONS;
   const configEvents    = config?.events         || EVENT_OPTIONS;
 
-  const [step, setStep] = useState(-1); // -1 = start screen
-  const [lang, setLang] = useState('en');
-  const [showLangUpgrade, setShowLangUpgrade] = useState(null);
-  const [form, setForm] = useState({
-    firstName: '', surname: '', email: '', phone: '',
-    gender: '', nationality: '',
-    sizingSystem: 'EU', sizingValue: '',
-    purpose: '', psMode: '',
-    styles: [], categories: [], brands: [], lifestyle: [],
-    travel: [], travelCustom: '',
-    events: [], eventCustom: '',
-    consent: false,
+  const storageKey = formToken ? `lvv_session_${formToken}` : null;
+
+  // Stable session ID — restored from localStorage or freshly generated
+  const [sessionId] = useState(() => {
+    if (!storageKey) return genId();
+    try { return JSON.parse(localStorage.getItem(storageKey) || '{}').sessionId || genId(); }
+    catch { return genId(); }
   });
+
+  // Device fingerprint collected once on mount
+  const [deviceInfo] = useState(collectDeviceInfo);
+
+  // Restore step / lang / form from localStorage if the user had a previous session
+  const [step, setStep] = useState(() => {
+    if (!storageKey) return -1;
+    try {
+      const s = JSON.parse(localStorage.getItem(storageKey) || '{}');
+      return typeof s.step === 'number' && s.step >= 0 ? s.step : -1;
+    } catch { return -1; }
+  });
+  const [lang, setLang] = useState(() => {
+    if (!storageKey) return 'en';
+    try { return JSON.parse(localStorage.getItem(storageKey) || '{}').lang || 'en'; }
+    catch { return 'en'; }
+  });
+  const [form, setForm] = useState(() => {
+    if (!storageKey) return { ...DEFAULT_FORM };
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey) || '{}').form;
+      return saved ? { ...DEFAULT_FORM, ...saved } : { ...DEFAULT_FORM };
+    } catch { return { ...DEFAULT_FORM }; }
+  });
+
+  const [showLangUpgrade, setShowLangUpgrade] = useState(null);
+
+  // Persist progress to localStorage + auto-save to backend on every step advance
+  useEffect(() => {
+    if (step < 0 || !storageKey) return;
+    try { localStorage.setItem(storageKey, JSON.stringify({ sessionId, step, lang, form })); } catch {}
+    if (!formToken) return;
+    fetch(`${API}/api/responses/session`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionId, formToken, data: form, deviceInfo, completionStep: step, isComplete: false }),
+    }).catch(() => {});
+  }, [step]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const isRTL = lang === 'ar';
   const wp = { rtl: isRTL, stepKey: step }; // shared Wrapper extra props
@@ -172,7 +253,8 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
       submittedAt: new Date().toISOString(),
       id: Date.now(),
     };
-    onComplete(entry, form.firstName, lang);
+    if (storageKey) { try { localStorage.removeItem(storageKey); } catch {} }
+    onComplete(entry, form.firstName, lang, sessionId, deviceInfo);
   };
 
   /* ── LANGUAGE UPGRADE BANNER ── */

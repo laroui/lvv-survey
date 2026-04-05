@@ -32,12 +32,18 @@ export default function PublicSurveyPage() {
       .finally(() => setLoading(false));
   }, [token]);
 
-  const handleComplete = async (entry, firstName, lang) => {
+  const handleComplete = async (entry, firstName, lang, sessionId) => {
     try {
-      await fetch(`${API}/api/responses`, {
-        method: 'POST',
+      await fetch(`${API}/api/responses/session`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ formToken: token, data: entry }),
+        body: JSON.stringify({
+          sessionId,
+          formToken: token,
+          data: entry,
+          completionStep: 13,
+          isComplete: true,
+        }),
       });
     } catch (e) {
       console.error('Failed to save response:', e);
@@ -131,6 +137,7 @@ export default function PublicSurveyPage() {
       config={formData?.config}
       partnerName={formData?.partner_name}
       partnerLogoUrl={formData?.partner_logo_url}
+      formToken={token}
     />
   );
 }

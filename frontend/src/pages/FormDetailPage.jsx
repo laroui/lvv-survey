@@ -42,6 +42,62 @@ function exportCSV(responses, formTitle) {
   URL.revokeObjectURL(url);
 }
 
+function DeviceModal({ info, onClose }) {
+  if (!info) return null;
+  const rows = [
+    ['OS',            info.os],
+    ['Browser',       info.browser],
+    ['Device',        info.deviceType],
+    ['Screen',        info.screenWidth && `${info.screenWidth}×${info.screenHeight} (${info.devicePixelRatio}x DPR)`],
+    ['Viewport',      info.viewportWidth && `${info.viewportWidth}×${info.viewportHeight}`],
+    ['Touch',         info.touchSupport != null ? (info.touchSupport ? 'Yes' : 'No') : null],
+    ['Language',      info.language],
+    ['Timezone',      info.timezone],
+    ['Connection',    info.connection ? `${info.connection.type} ${info.connection.downlink ? `(${info.connection.downlink} Mbps)` : ''}`.trim() : null],
+    ['IP Address',    info.ip],
+    ['Referrer',      info.referrer],
+    ['Collected At',  info.collectedAt ? new Date(info.collectedAt).toLocaleString() : null],
+  ].filter(([, v]) => v);
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: 'fixed', inset: 0, background: 'rgba(42,26,34,0.5)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        zIndex: 1000, padding: '1rem',
+      }}
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{
+          background: '#fff', borderRadius: 12, padding: '1.5rem',
+          maxWidth: 460, width: '100%',
+          boxShadow: '0 20px 60px rgba(42,26,34,0.2)',
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#aaa' }}>Device Info</div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: '#aaa', lineHeight: 1 }}>×</button>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+          {rows.map(([k, v]) => (
+            <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--beige-mid)', fontSize: 12 }}>
+              <span style={{ color: '#aaa', fontWeight: 300, flex: '0 0 110px' }}>{k}</span>
+              <span style={{ color: 'var(--plum-dark)', fontWeight: 400, textAlign: 'right', flex: 1, wordBreak: 'break-all' }}>{String(v)}</span>
+            </div>
+          ))}
+        </div>
+        {info.userAgent && (
+          <div style={{ marginTop: '1rem', padding: '8px 10px', background: 'var(--beige)', borderRadius: 6, fontSize: 10, color: '#aaa', wordBreak: 'break-all', lineHeight: 1.5 }}>
+            {info.userAgent}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function FormDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -49,6 +105,7 @@ export default function FormDetailPage() {
   const [responses, setResponses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
+  const [deviceModal, setDeviceModal] = useState(null);
   const qrRef = useRef(null);
 
   const publicUrl = form ? `${window.location.origin}/f/${form.public_url_token}` : '';
@@ -243,7 +300,7 @@ export default function FormDetailPage() {
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
                 <thead>
                   <tr style={{ background: 'var(--beige)' }}>
-                    {['Name', 'Email', 'Phone', 'Nationality', 'Size', 'Styles', 'Submitted'].map(h => (
+                    {['Name', 'Email', 'Phone', 'Nationality', 'Size', 'Styles', 'Status', 'Submitted', ''].map(h => (
                       <th key={h} style={{
                         padding: '10px 14px', textAlign: 'left', fontWeight: 400,
                         color: '#aaa', fontSize: 10, textTransform: 'uppercase',
@@ -256,6 +313,8 @@ export default function FormDetailPage() {
                 <tbody>
                   {responses.map((r, i) => {
                     const d = r.data || {};
+                    const complete = r.is_complete;
+                    const step = r.completion_step ?? 0;
                     return (
                       <tr key={r.id} style={{ borderBottom: '1px solid var(--beige-mid)', background: i % 2 === 0 ? '#fff' : 'rgba(245,240,230,0.4)' }}>
                         <td style={{ padding: '10px 14px', color: 'var(--plum-dark)', fontWeight: 400, whiteSpace: 'nowrap' }}>
@@ -270,8 +329,32 @@ export default function FormDetailPage() {
                         <td style={{ padding: '10px 14px', color: '#666' }}>
                           {(d.styles || []).join(', ') || '—'}
                         </td>
+                        <td style={{ padding: '10px 14px', whiteSpace: 'nowrap' }}>
+                          {complete ? (
+                            <span style={{ padding: '2px 8px', borderRadius: 20, background: 'rgba(39,174,96,0.1)', color: '#1e8449', fontSize: 10, fontWeight: 400 }}>Complete</span>
+                          ) : (
+                            <span style={{ padding: '2px 8px', borderRadius: 20, background: 'rgba(201,168,76,0.12)', color: '#7a5e1a', fontSize: 10, fontWeight: 400 }}>Step {step}/13</span>
+                          )}
+                        </td>
                         <td style={{ padding: '10px 14px', color: '#aaa', whiteSpace: 'nowrap', fontSize: 11 }}>
-                          {new Date(r.submitted_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                          {r.submitted_at
+                            ? new Date(r.submitted_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                            : '—'}
+                        </td>
+                        <td style={{ padding: '10px 14px' }}>
+                          {r.device_info && Object.keys(r.device_info).length > 0 && (
+                            <button
+                              onClick={() => setDeviceModal(r.device_info)}
+                              title="Device info"
+                              style={{
+                                background: 'none', border: '1px solid var(--beige-mid)',
+                                borderRadius: 6, padding: '4px 8px', cursor: 'pointer',
+                                fontSize: 11, color: 'var(--plum-mid)', whiteSpace: 'nowrap',
+                              }}
+                            >
+                              📱 Info
+                            </button>
+                          )}
                         </td>
                       </tr>
                     );
@@ -282,6 +365,8 @@ export default function FormDetailPage() {
           )}
         </div>
       </div>
+
+      <DeviceModal info={deviceModal} onClose={() => setDeviceModal(null)} />
 
       {toast && (
         <div style={{

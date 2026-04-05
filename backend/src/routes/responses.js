@@ -60,6 +60,53 @@ function buildWhere(formId, { from, to, gender, style }) {
   return { where: conditions.join(' AND '), params };
 }
 
+// PUT /api/responses/session — public (auto-save + final submit via session upsert)
+router.put('/session', async (req, res, next) => {
+  try {
+    const { sessionId, formToken, data, deviceInfo, completionStep, isComplete } = req.body;
+    if (!sessionId || !formToken) {
+      return res.status(400).json({ success: false, error: 'sessionId and formToken required' });
+    }
+
+    const [form] = await sql`
+      SELECT id FROM forms WHERE public_url_token = ${formToken} AND is_active = true
+    `;
+    if (!form) return res.status(404).json({ success: false, error: 'Form not found or inactive' });
+
+    // Merge server-side IP into device_info
+    const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.ip || null;
+    const enrichedDeviceInfo = { ...(deviceInfo || {}), ip };
+
+    const step = completionStep ?? 0;
+    const complete = isComplete ?? false;
+
+    const [response] = await sql`
+      INSERT INTO responses (form_id, data, device_info, completion_step, is_complete, session_id, submitted_at)
+      VALUES (
+        ${form.id},
+        ${JSON.stringify(data || {})},
+        ${JSON.stringify(enrichedDeviceInfo)},
+        ${step},
+        ${complete},
+        ${sessionId},
+        ${complete ? sql`now()` : sql`null`}
+      )
+      ON CONFLICT (session_id) DO UPDATE SET
+        data            = EXCLUDED.data,
+        device_info     = EXCLUDED.device_info,
+        completion_step = EXCLUDED.completion_step,
+        is_complete     = EXCLUDED.is_complete,
+        submitted_at    = CASE
+          WHEN EXCLUDED.is_complete AND responses.submitted_at IS NULL THEN now()
+          WHEN EXCLUDED.is_complete THEN responses.submitted_at
+          ELSE responses.submitted_at
+        END
+      RETURNING id
+    `;
+    res.json({ success: true, responseId: response.id });
+  } catch (err) { next(err); }
+});
+
 // POST /api/responses — public (guests submit)
 router.post('/', async (req, res, next) => {
   try {
