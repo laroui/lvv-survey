@@ -169,13 +169,15 @@ export function MultiTag({ label, selected, onClick }) {
 
 /* ── StyleCard ── */
 export function StyleCard({ name, brands, selected, onClick, photoUrl }) {
+  const [imgFailed, setImgFailed] = useState(false);
   const [hovered, setHovered] = useState(false);
 
   const handleMouseMove = (e) => {
+    if (window.matchMedia('(hover: none)').matches) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width - 0.5;
     const y = (e.clientY - rect.top) / rect.height - 0.5;
-    e.currentTarget.style.transform = `perspective(600px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg) scale(1.02)`;
+    e.currentTarget.style.transform = `perspective(600px) rotateY(${x * 7}deg) rotateX(${-y * 7}deg) scale(1.02)`;
   };
   const handleMouseLeave = (e) => {
     e.currentTarget.style.transform = 'perspective(600px) rotateY(0deg) rotateX(0deg) scale(1)';
@@ -193,70 +195,88 @@ export function StyleCard({ name, brands, selected, onClick, photoUrl }) {
         aspectRatio: '1 / 1',
         borderRadius: 'var(--radius-md)',
         overflow: 'hidden',
-        border: `2.5px solid ${selected ? 'var(--gold)' : 'transparent'}`,
+        border: `2.5px solid ${selected ? 'var(--gold)' : 'rgba(216,207,189,0.4)'}`,
         cursor: 'pointer',
-        transition: 'border-color 0.25s, transform 0.15s ease',
-        background: 'linear-gradient(135deg, var(--plum-dark), var(--plum))',
+        transition: 'transform 0.15s ease, border-color 0.2s',
         willChange: 'transform',
         transformStyle: 'preserve-3d',
-        touchAction: 'manipulation',
+        boxShadow: selected
+          ? '0 0 0 1px var(--gold), 0 8px 24px rgba(42,26,34,0.2)'
+          : '0 2px 8px rgba(42,26,34,0.1)',
       }}
     >
-      {/* Photo */}
-      {photoUrl && (
+      {/* Background — photo or fallback gradient */}
+      {photoUrl && !imgFailed ? (
         <img
           src={photoUrl}
           alt={name}
+          onError={() => setImgFailed(true)}
           style={{
-            position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover',
+            width: '100%', height: '100%',
+            objectFit: 'cover', objectPosition: 'center top',
+            display: 'block',
+            transform: hovered ? 'scale(1.07)' : 'scale(1)',
             transition: 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-            transform: hovered ? 'scale(1.08)' : 'scale(1)',
           }}
-          onError={e => { e.target.style.display = 'none'; }}
         />
+      ) : (
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(135deg, var(--plum-dark) 0%, var(--plum-mid) 100%)',
+        }} />
       )}
-      {/* Dark gradient overlay for legibility */}
+      {/* Dark gradient overlay — always present for text legibility */}
       <div style={{
         position: 'absolute', inset: 0,
-        background: 'linear-gradient(to top, rgba(42,26,34,0.88) 0%, rgba(42,26,34,0.12) 55%, transparent 100%)',
+        background: 'linear-gradient(to top, rgba(26,10,18,0.88) 0%, rgba(26,10,18,0.3) 55%, transparent 100%)',
+        pointerEvents: 'none',
       }} />
       {/* Gold tint when selected */}
       {selected && (
         <div style={{
           position: 'absolute', inset: 0,
-          background: 'rgba(201,168,76,0.16)',
+          background: 'rgba(201,168,76,0.12)',
+          pointerEvents: 'none',
         }} />
       )}
-      {/* Checkmark */}
+      {/* Checkmark badge */}
       {selected && (
         <div style={{
           position: 'absolute', top: 10, right: 10,
-          width: 22, height: 22, borderRadius: '50%',
+          width: 24, height: 24, borderRadius: '50%',
           background: 'var(--gold)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           color: '#fff', fontSize: 11, fontWeight: 700,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+          zIndex: 2,
         }}>✓</div>
       )}
-      {/* Style name + brands */}
-      <div style={{ position: 'absolute', bottom: 14, left: 14, right: 14 }}>
+      {/* Text overlay — bottom */}
+      <div style={{
+        position: 'absolute', bottom: 0, left: 0, right: 0,
+        padding: '14px 14px 16px',
+        zIndex: 1,
+      }}>
         <div style={{
           fontFamily: 'var(--font-display)',
           fontStyle: 'italic',
-          fontSize: 18,
+          fontSize: 19,
           fontWeight: 400,
           color: '#fff',
           lineHeight: 1.2,
-          textShadow: '0 1px 4px rgba(0,0,0,0.4)',
+          letterSpacing: '0.01em',
+          textShadow: '0 1px 6px rgba(0,0,0,0.5)',
+          marginBottom: 5,
         }}>
           {name}
         </div>
         <div style={{
           fontSize: 10,
-          color: 'rgba(255,255,255,0.6)',
+          color: 'rgba(255,255,255,0.55)',
           fontFamily: 'var(--font-sans)',
           fontWeight: 300,
-          marginTop: 3,
           lineHeight: 1.4,
+          letterSpacing: '0.02em',
         }}>
           {brands.slice(0, 3).join(' · ')}
         </div>

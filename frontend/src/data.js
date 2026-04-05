@@ -1,5 +1,3 @@
-const UNS = (id) => `https://images.unsplash.com/${id}?w=600&q=80`;
-
 export const STYLES_FEMALE = [
   {
     id: 'casual-luxury',
@@ -8,7 +6,7 @@ export const STYLES_FEMALE = [
     nameES: 'Lujo Casual',
     nameAR: 'الأناقة العفوية',
     brands: ['Loro Piana', 'Brunello Cucinelli', 'Zegna', 'Burberry', 'Max Mara', 'JM Weston'],
-    photoUrl: UNS('photo-1441984904996-e0b6ba687e04'),
+    photoUrl: '/images/styles/f1.jpg',
   },
   {
     id: 'parisian-elegance',
@@ -17,7 +15,7 @@ export const STYLES_FEMALE = [
     nameES: 'Elegancia Parisina',
     nameAR: 'الأناقة الباريسية',
     brands: ['Saint Laurent', 'Chloé', 'Isabel Marant', 'Valentino', 'Burberry', 'Ami'],
-    photoUrl: UNS('photo-1509631179647-0177331693ae'),
+    photoUrl: '/images/styles/f2.jpg',
   },
   {
     id: 'bold-colorful',
@@ -26,7 +24,7 @@ export const STYLES_FEMALE = [
     nameES: 'Atrevido y Colorido',
     nameAR: 'جريء وملوّن',
     brands: ['Gucci', 'Loewe', 'Marni', 'Balenciaga', 'Dolce & Gabbana', 'Versace'],
-    photoUrl: UNS('photo-1558618666-fcd25c85cd64'),
+    photoUrl: '/images/styles/f3.jpg',
   },
   {
     id: 'boho-romantic',
@@ -35,7 +33,7 @@ export const STYLES_FEMALE = [
     nameES: 'Romántico Boho',
     nameAR: 'رومانسي بوهيمي',
     brands: ['Chloé', 'Zimmermann', 'Isabel Marant', 'Valentino', 'Gucci', 'Prada / Miu Miu'],
-    photoUrl: UNS('photo-1515886657613-9f3515b0c78f'),
+    photoUrl: '/images/styles/f4.jpg',
   },
 ];
 
@@ -47,7 +45,7 @@ export const STYLES_MALE = [
     nameES: 'Casual',
     nameAR: 'كاجوال',
     brands: ['Loro Piana', 'Brunello Cucinelli', 'Ralph Lauren', "Tod's", 'Barbour'],
-    photoUrl: UNS('photo-1552374196-1ab2a1c593e8'),
+    photoUrl: '/images/styles/m1.jpg',
   },
   {
     id: 'classic',
@@ -56,7 +54,7 @@ export const STYLES_MALE = [
     nameES: 'Clásico',
     nameAR: 'كلاسيكي',
     brands: ['Zegna', 'Brioni', 'Kiton', 'Canali', 'JM Weston'],
-    photoUrl: UNS('photo-1507679799987-c73779587ccf'),
+    photoUrl: '/images/styles/m2.jpg',
   },
   {
     id: 'bold',
@@ -65,7 +63,7 @@ export const STYLES_MALE = [
     nameES: 'Atrevido',
     nameAR: 'جريء',
     brands: ['Gucci', 'Balenciaga', 'Versace', 'Dsquared2', 'Dolce & Gabbana'],
-    photoUrl: UNS('photo-1583743814966-8936f5b7be1a'),
+    photoUrl: '/images/styles/m3.jpg',
   },
   {
     id: 'street',
@@ -74,7 +72,7 @@ export const STYLES_MALE = [
     nameES: 'Urbano',
     nameAR: 'ستريت',
     brands: ['Off-White', 'Palm Angels', 'Stone Island', 'CP Company', 'Ami'],
-    photoUrl: UNS('photo-1556821840-3a63f15732ce'),
+    photoUrl: '/images/styles/m4.jpg',
   },
 ];
 
