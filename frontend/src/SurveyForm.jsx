@@ -67,8 +67,12 @@ function Wrapper({ pct, hotelName, children, rtl, stepKey }) {
 
 export default function SurveyForm({ onComplete, config = {}, partnerName, partnerLogoUrl }) {
   const hotelName       = config?.hotelName  || partnerName || 'The Peninsula Paris';
-  const stylesFemale    = config?.styles?.female || STYLES_FEMALE;
-  const stylesMale      = config?.styles?.male   || STYLES_MALE;
+  const stylesFemale    = (config?.styles?.female || STYLES_FEMALE).map(s => ({
+    ...s, photoUrl: s.photoUrl || STYLES_FEMALE.find(d => d.id === s.id)?.photoUrl || null,
+  }));
+  const stylesMale      = (config?.styles?.male || STYLES_MALE).map(s => ({
+    ...s, photoUrl: s.photoUrl || STYLES_MALE.find(d => d.id === s.id)?.photoUrl || null,
+  }));
   const configCats      = config?.categories     || CATEGORIES;
   const configPurposes  = config?.purposes       || PURPOSES;
   const configPsModes   = config?.psModes        || PS_MODES;
