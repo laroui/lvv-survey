@@ -437,17 +437,17 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
         </div>
 
         {/* Logo footer */}
-        <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: 20, paddingTop: '2.5rem' }}>
+        <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: 24, paddingTop: '2.5rem' }}>
           <img
             src="/images/LVV Logo Black transparent.png"
             alt="La Vallée Village"
-            style={{ height: 32, filter: 'brightness(0) invert(1)', opacity: 0.85, display: 'block' }}
+            style={{ height: 48, width: 'auto', filter: 'brightness(0) invert(1)', opacity: 0.85, display: 'block' }}
           />
-          <div style={{ fontSize: 18, color: 'rgba(245,240,230,0.4)', fontWeight: 300, lineHeight: 1 }}>×</div>
+          <div style={{ fontSize: 22, color: 'rgba(245,240,230,0.4)', fontWeight: 300, lineHeight: 1 }}>×</div>
           {partnerLogoUrl ? (
             <img
               src={partnerLogoUrl} alt={displayPartner}
-              style={{ height: 28, filter: 'brightness(0) invert(1)', opacity: 0.85, display: 'block' }}
+              style={{ height: 48, width: 'auto', filter: 'brightness(0) invert(1)', opacity: 0.85, display: 'block' }}
               onError={e => { e.target.style.display = 'none'; }}
             />
           ) : (
