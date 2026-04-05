@@ -30,6 +30,15 @@ function labelKey(lang) {
   return 'labelEN';
 }
 
+// Get label from a config item — if the stored item lacks ES/AR (old DB record),
+// fall back to the matching entry in the data.js defaults array by id.
+function getLabel(item, lang, defaults) {
+  const key = labelKey(lang);
+  if (item[key]) return item[key];
+  const def = defaults?.find(d => d.id === item.id);
+  return def?.[key] || item.labelEN || item.id;
+}
+
 /* ── SHARED LAYOUT — defined outside SurveyForm so they are stable
    component references across re-renders (prevents keyboard dismiss) ── */
 function Header({ hotelName }) {
@@ -455,7 +464,7 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
         {configPurposes.map(p => (
           <OptionItem
             key={p.id}
-            label={p[labelKey(lang)] || p.labelEN}
+            label={getLabel(p, lang, PURPOSES)}
             selected={form.purpose === p.id}
             onClick={() => set('purpose', p.id)}
           />
@@ -479,7 +488,7 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
         {configPsModes.map(p => (
           <OptionItem
             key={p.id}
-            label={p[labelKey(lang)] || p.labelEN}
+            label={getLabel(p, lang, PS_MODES)}
             selected={form.psMode === p.id}
             onClick={() => set('psMode', p.id)}
           />
@@ -544,7 +553,7 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
         {configCats.map(c => (
           <MultiTag
             key={c.id}
-            label={c[labelKey(lang)] || c.labelEN}
+            label={getLabel(c, lang, CATEGORIES)}
             selected={form.categories.includes(c.id)}
             onClick={() => toggleArr('categories', c.id)}
           />
@@ -604,7 +613,7 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
         {configLife.map(l => (
           <MultiTag
             key={l.id}
-            label={l[labelKey(lang)] || l.labelEN}
+            label={getLabel(l, lang, LIFESTYLE)}
             selected={form.lifestyle.includes(l.id)}
             onClick={() => toggleArr('lifestyle', l.id)}
           />
@@ -627,7 +636,7 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
         {configTravel.map(o => (
           <MultiTag
             key={o.id}
-            label={o[labelKey(lang)] || o.labelEN}
+            label={getLabel(o, lang, TRAVEL_OPTIONS)}
             selected={form.travel.includes(o.id)}
             onClick={() => toggleArr('travel', o.id)}
           />
@@ -653,7 +662,7 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
         {configEvents.map(o => (
           <MultiTag
             key={o.id}
-            label={o[labelKey(lang)] || o.labelEN}
+            label={getLabel(o, lang, EVENT_OPTIONS)}
             selected={form.events.includes(o.id)}
             onClick={() => toggleArr('events', o.id)}
           />
@@ -673,16 +682,15 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
   /* ── STEP 13: REVIEW + CONSENT ── */
   if (step === 13) {
     const sys = getSizingSystem();
-    const lk = labelKey(lang);
     const styleNames = form.styles.map(id => getStyleName(id)).join(', ');
-    const catLabels = form.categories.map(id => { const c = configCats.find(x => x.id === id); return c ? (c[lk] || c.labelEN) : id; }).join(', ');
-    const lifeLabels = form.lifestyle.map(id => { const l = configLife.find(x => x.id === id); return l ? (l[lk] || l.labelEN) : id; }).join(', ');
-    const purposeItem = configPurposes.find(p => p.id === form.purpose);
-    const purposeLabel = purposeItem ? (purposeItem[lk] || purposeItem.labelEN) : '—';
-    const psModeItem = configPsModes.find(p => p.id === form.psMode);
-    const psModeLabel = psModeItem ? (psModeItem[lk] || psModeItem.labelEN) : '—';
-    const travelLabels = [...form.travel.map(id => { const o = configTravel.find(x => x.id === id); return o ? (o[lk] || o.labelEN) : id; }), form.travelCustom].filter(Boolean).join(', ');
-    const eventLabels = [...form.events.map(id => { const o = configEvents.find(x => x.id === id); return o ? (o[lk] || o.labelEN) : id; }), form.eventCustom].filter(Boolean).join(', ');
+    const catLabels  = form.categories.map(id => { const c = configCats.find(x => x.id === id);    return c ? getLabel(c, lang, CATEGORIES)    : id; }).join(', ');
+    const lifeLabels = form.lifestyle.map(id =>   { const l = configLife.find(x => x.id === id);    return l ? getLabel(l, lang, LIFESTYLE)      : id; }).join(', ');
+    const purposeItem  = configPurposes.find(p => p.id === form.purpose);
+    const purposeLabel = purposeItem  ? getLabel(purposeItem,  lang, PURPOSES)  : '—';
+    const psModeItem   = configPsModes.find(p => p.id === form.psMode);
+    const psModeLabel  = psModeItem   ? getLabel(psModeItem,   lang, PS_MODES)  : '—';
+    const travelLabels = [...form.travel.map(id => { const o = configTravel.find(x => x.id === id); return o ? getLabel(o, lang, TRAVEL_OPTIONS) : id; }), form.travelCustom].filter(Boolean).join(', ');
+    const eventLabels  = [...form.events.map(id =>  { const o = configEvents.find(x => x.id === id); return o ? getLabel(o, lang, EVENT_OPTIONS)  : id; }), form.eventCustom].filter(Boolean).join(', ');
 
     return (
       <Wrapper pct={pct} hotelName={hotelName} {...wp}>
