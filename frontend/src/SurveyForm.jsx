@@ -383,8 +383,15 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
           background: `
             radial-gradient(ellipse at 20% 50%, rgba(82,56,73,0.6) 0%, transparent 60%),
             radial-gradient(ellipse at 80% 20%, rgba(201,168,76,0.08) 0%, transparent 50%),
-            linear-gradient(160deg, #1a0a12 0%, #2a1a22 40%, #3d2030 70%, #523849 100%)
+            linear-gradient(160deg, #0a0408 0%, #1a0a12 15%, #2a1a22 40%, #3d2030 65%, #1a0a12 85%, #000 100%)
           `,
+        }} />
+        {/* Bottom fade to black */}
+        <div style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0,
+          height: '30%',
+          background: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 60%, #000 100%)',
+          pointerEvents: 'none', zIndex: 0,
         }} />
         {/* Animated orbs */}
         <div className="orb orb-1" />
