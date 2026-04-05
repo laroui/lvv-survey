@@ -32,7 +32,7 @@ export default function PublicSurveyPage() {
       .finally(() => setLoading(false));
   }, [token]);
 
-  const handleComplete = async (entry, firstName, lang, sessionId) => {
+  const handleComplete = async (entry, firstName, lang, sessionId, deviceInfo) => {
     try {
       await fetch(`${API}/api/responses/session`, {
         method: 'PUT',
@@ -41,6 +41,7 @@ export default function PublicSurveyPage() {
           sessionId,
           formToken: token,
           data: entry,
+          deviceInfo,
           completionStep: 13,
           isComplete: true,
         }),
