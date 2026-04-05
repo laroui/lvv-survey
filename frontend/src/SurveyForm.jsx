@@ -398,7 +398,7 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
         <div className="orb orb-2" />
 
         {/* Main content — glassmorphism card */}
-        <div style={{ position: 'relative', zIndex: 1, flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', maxWidth: 440 }}>
+        <div style={{ position: 'relative', zIndex: 1, flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', maxWidth: 480, padding: '0 clamp(0px, 4vw, 2rem)', boxSizing: 'border-box' }}>
           <div style={{
             background: 'rgba(245, 240, 230, 0.07)',
             backdropFilter: 'blur(24px)',
@@ -444,24 +444,31 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
         </div>
 
         {/* Logo footer */}
-        <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: 24, paddingTop: '2.5rem' }}>
-          <img
-            src="/images/LVV Logo Black transparent.png"
-            alt="La Vallée Village"
-            style={{ height: 48, width: 'auto', filter: 'brightness(0) invert(1)', opacity: 0.85, display: 'block' }}
-          />
-          <div style={{ fontSize: 22, color: 'rgba(245,240,230,0.4)', fontWeight: 300, lineHeight: 1 }}>×</div>
-          {partnerLogoUrl ? (
+        {/* Logo footer — each logo lives in an equal 120×52 box so neither dominates */}
+        <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 20, paddingTop: '2.5rem', width: '100%', maxWidth: 480 }}>
+          {/* LVV logo box */}
+          <div style={{ width: 'clamp(90px, 22vw, 130px)', height: 52, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
             <img
-              src={partnerLogoUrl} alt={displayPartner}
-              style={{ height: 48, width: 'auto', filter: 'brightness(0) invert(1)', opacity: 0.85, display: 'block' }}
-              onError={e => { e.target.style.display = 'none'; }}
+              src="/images/LVV Logo Black transparent.png"
+              alt="La Vallée Village"
+              style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: 0.85 }}
             />
-          ) : (
-            <div style={{ fontSize: 13, letterSpacing: '0.1em', color: 'rgba(245,240,230,0.9)', fontWeight: 400, textTransform: 'uppercase', fontFamily: 'var(--font-sans)' }}>
-              {displayPartner}
-            </div>
-          )}
+          </div>
+          <div style={{ fontSize: 20, color: 'rgba(245,240,230,0.35)', fontWeight: 300, lineHeight: 1, flexShrink: 0 }}>×</div>
+          {/* Partner logo box — same fixed dimensions */}
+          <div style={{ width: 'clamp(90px, 22vw, 130px)', height: 52, display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+            {partnerLogoUrl ? (
+              <img
+                src={partnerLogoUrl} alt={displayPartner}
+                style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: 0.85 }}
+                onError={e => { e.target.style.display = 'none'; }}
+              />
+            ) : (
+              <div style={{ fontSize: 11, letterSpacing: '0.12em', color: 'rgba(245,240,230,0.9)', fontWeight: 400, textTransform: 'uppercase', fontFamily: 'var(--font-sans)', lineHeight: 1.4 }}>
+                {displayPartner}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );
