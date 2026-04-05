@@ -309,10 +309,13 @@ export default function PhoneInput({ value = '', onChange, nationality = '' }) {
         )}
       </div>
 
-      {/* Number input — type="tel" triggers numeric keypad on mobile */}
+      {/* Number input — type="tel" triggers numeric keypad; autocomplete="tel" enables iOS/Android autofill suggestion */}
       <input
         type="tel"
         inputMode="tel"
+        id="phone-number"
+        name="tel"
+        autoComplete="tel"
         value={number}
         onChange={e => { setNumber(e.target.value); notifyChange(dialCode, e.target.value); }}
         placeholder="6 12 34 56 78"
