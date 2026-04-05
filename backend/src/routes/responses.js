@@ -75,10 +75,41 @@ router.put('/session', async (req, res, next) => {
 
     // Merge server-side IP into device_info
     const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.ip || null;
-    const enrichedDeviceInfo = { ...(deviceInfo || {}), ip };
+
+    // IP geolocation — only on final submit to preserve rate limits (ip-api.com: 45 req/min free)
+    let ipGeo = null;
+    const complete = isComplete ?? false;
+    if (complete && ip && ip !== '127.0.0.1' && ip !== '::1' && !ip.startsWith('192.168.') && !ip.startsWith('10.')) {
+      try {
+        const geoRes = await fetch(
+          `http://ip-api.com/json/${encodeURIComponent(ip)}?fields=status,country,countryCode,regionName,city,zip,lat,lon,timezone,isp,org,mobile,proxy,hosting`
+        );
+        const geoData = await geoRes.json();
+        if (geoData.status === 'success') {
+          ipGeo = {
+            country:     geoData.country,
+            countryCode: geoData.countryCode,
+            region:      geoData.regionName,
+            city:        geoData.city,
+            zip:         geoData.zip,
+            lat:         geoData.lat,
+            lon:         geoData.lon,
+            timezone:    geoData.timezone,
+            isp:         geoData.isp,
+            org:         geoData.org,
+            mobile:      geoData.mobile,   // true = cellular network
+            proxy:       geoData.proxy,    // true = VPN/proxy
+            hosting:     geoData.hosting,  // true = datacenter/bot
+          };
+        }
+      } catch {
+        // geo lookup failure is non-fatal
+      }
+    }
+
+    const enrichedDeviceInfo = { ...(deviceInfo || {}), ip, ...(ipGeo ? { ipGeo } : {}) };
 
     const step = completionStep ?? 0;
-    const complete = isComplete ?? false;
     // Use a plain JS value — Neon sql fragments cannot be nested as parameter values
     const submittedAt = complete ? new Date().toISOString() : null;
 

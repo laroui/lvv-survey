@@ -220,6 +220,26 @@ function DeviceInfoPanel({ response }) {
                 <Row label="Bot/WebDriver"   value={dev.isWebDriver !== undefined ? bool(dev.isWebDriver) : null} />
               </Group>
 
+              <Group emoji="🌐" title="IP Intelligence">
+                {dev.ipGeo ? (
+                  <>
+                    <Row label="City"       value={dev.ipGeo.city} />
+                    <Row label="Region"     value={dev.ipGeo.region} />
+                    <Row label="Country"    value={dev.ipGeo.country} />
+                    <Row label="ISP"        value={dev.ipGeo.isp} />
+                    <Row label="Org / ASN"  value={dev.ipGeo.org} />
+                    <Row label="Cellular"   value={dev.ipGeo.mobile !== null && dev.ipGeo.mobile !== undefined ? bool(dev.ipGeo.mobile) : null} />
+                    <Row label="VPN/Proxy"  value={dev.ipGeo.proxy !== null && dev.ipGeo.proxy !== undefined ? bool(dev.ipGeo.proxy) : null} />
+                    <Row label="Datacenter" value={dev.ipGeo.hosting !== null && dev.ipGeo.hosting !== undefined ? bool(dev.ipGeo.hosting) : null} />
+                    <Row label="Lat / Lon"  value={dev.ipGeo.lat && dev.ipGeo.lon ? `${dev.ipGeo.lat}, ${dev.ipGeo.lon}` : null} />
+                  </>
+                ) : (
+                  <div style={{ fontSize: 11, color: '#ccc', fontWeight: 300, padding: '4px 0' }}>
+                    Available on next submission
+                  </div>
+                )}
+              </Group>
+
               <Group emoji="🔗" title="Source">
                 <Row label="Referrer"     value={dev.referrer} />
                 <Row label="Page URL"     value={dev.pageUrl} />
