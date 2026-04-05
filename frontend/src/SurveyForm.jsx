@@ -25,29 +25,104 @@ function collectDeviceInfo() {
   const isAndroid = /Android/i.test(ua);
   const isMac     = /Mac/i.test(navigator.platform) && !isIOS;
   const isWindows = /Win/i.test(navigator.platform);
+  const isLinux   = /Linux/i.test(navigator.platform) && !isAndroid;
   const isMobile  = /Mobile|Android|iPhone/i.test(ua);
   const isTablet  = /iPad|Tablet/i.test(ua) || (/Android/i.test(ua) && !/Mobile/i.test(ua));
-  const isChrome  = /Chrome/i.test(ua) && !/Edge|Edg|OPR/i.test(ua);
+  const isChrome  = /Chrome/i.test(ua) && !/Edge|Edg|OPR|SamsungBrowser/i.test(ua);
   const isSafari  = /Safari/i.test(ua) && !/Chrome/i.test(ua);
   const isFirefox = /Firefox/i.test(ua);
   const isEdge    = /Edge|Edg/i.test(ua);
-  const conn      = navigator.connection;
+  const isOpera   = /OPR/i.test(ua);
+  const isSamsung = /SamsungBrowser/i.test(ua);
+
+  // Version extraction
+  const iosVersion     = isIOS     ? (ua.match(/OS (\d+[._]\d+)/) || [])[1]?.replace('_', '.') : null;
+  const androidVersion = isAndroid ? (ua.match(/Android (\d+\.?\d*)/) || [])[1] : null;
+  const chromeV  = (ua.match(/(?:Chrome|CriOS)\/(\d+)/) || [])[1];
+  const safariV  = (ua.match(/Version\/(\d+\.\d+)/) || [])[1];
+  const firefoxV = (ua.match(/Firefox\/(\d+)/) || [])[1];
+  const edgeV    = (ua.match(/Edg\/(\d+)/) || [])[1];
+  const samsungV = (ua.match(/SamsungBrowser\/(\d+)/) || [])[1];
+
+  // Language → region → flag emoji
+  const lang  = navigator.language || '';
+  const langs = Array.from(new Set([lang, ...(navigator.languages || [])])).join(', ');
+  const regionMatch = lang.match(/[-_]([A-Z]{2,3})/i);
+  const region = regionMatch ? regionMatch[1].toUpperCase() : null;
+  const countryFlag = region && region.length === 2
+    ? [...region].map(c => String.fromCodePoint(c.charCodeAt(0) - 65 + 0x1F1E6)).join('')
+    : null;
+
+  // Network Information API
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+
+  // Modern UA client hints (Chromium only)
+  const uaData = navigator.userAgentData || null;
+
+  // matchMedia helper
+  const mq = q => { try { return window.matchMedia(q).matches; } catch { return null; } };
+
   return {
-    os:               isIOS ? 'iOS' : isAndroid ? 'Android' : isMac ? 'macOS' : isWindows ? 'Windows' : navigator.platform || 'Unknown',
-    browser:          isChrome ? 'Chrome' : isSafari ? 'Safari' : isFirefox ? 'Firefox' : isEdge ? 'Edge' : 'Other',
-    deviceType:       isMobile ? 'Mobile' : isTablet ? 'Tablet' : 'Desktop',
-    screenWidth:      screen.width,
-    screenHeight:     screen.height,
-    viewportWidth:    window.innerWidth,
-    viewportHeight:   window.innerHeight,
-    devicePixelRatio: window.devicePixelRatio ?? 1,
-    language:         navigator.language,
-    timezone:         Intl.DateTimeFormat().resolvedOptions().timeZone,
-    touchSupport:     'ontouchstart' in window,
-    connection:       conn ? { type: conn.effectiveType, downlink: conn.downlink } : null,
-    referrer:         document.referrer || null,
-    userAgent:        ua,
-    collectedAt:      new Date().toISOString(),
+    // ip injected server-side
+
+    // Device identity
+    os:             isIOS ? 'iOS' : isAndroid ? 'Android' : isMac ? 'macOS' : isWindows ? 'Windows' : isLinux ? 'Linux' : navigator.platform || 'Unknown',
+    osVersion:      iosVersion || androidVersion || null,
+    browser:        isSamsung ? 'Samsung Internet' : isOpera ? 'Opera' : isChrome ? 'Chrome' : isSafari ? 'Safari' : isFirefox ? 'Firefox' : isEdge ? 'Edge' : 'Other',
+    browserVersion: isSamsung ? samsungV : isChrome ? chromeV : isSafari ? safariV : isFirefox ? firefoxV : isEdge ? edgeV : null,
+    deviceType:     isMobile ? 'Mobile' : isTablet ? 'Tablet' : 'Desktop',
+
+    // Screen
+    screenWidth:       screen.width,
+    screenHeight:      screen.height,
+    screenAvailWidth:  screen.availWidth,
+    screenAvailHeight: screen.availHeight,
+    screenOrientation: screen.orientation?.type || null,
+    colorDepth:        screen.colorDepth,
+    viewportWidth:     window.innerWidth,
+    viewportHeight:    window.innerHeight,
+    devicePixelRatio:  window.devicePixelRatio ?? 1,
+
+    // Locale & location hints
+    language:       lang,
+    languages:      langs,
+    region:         region || null,
+    countryFlag:    countryFlag || null,
+    timezone:       Intl.DateTimeFormat().resolvedOptions().timeZone,
+    timezoneOffset: new Date().getTimezoneOffset(),
+
+    // Hardware hints (no permission required)
+    deviceMemoryGB: navigator.deviceMemory || null,
+    cpuCores:       navigator.hardwareConcurrency || null,
+    maxTouchPoints: navigator.maxTouchPoints ?? 0,
+    touchSupport:   'ontouchstart' in window || (navigator.maxTouchPoints > 0),
+
+    // Network (Network Information API — Chrome/Android)
+    connectionType:     conn?.effectiveType || null,
+    connectionDownlink: conn?.downlink ?? null,
+    connectionRtt:      conn?.rtt ?? null,
+    connectionSaveData: conn?.saveData ?? null,
+
+    // User preferences
+    prefersDark:          mq('(prefers-color-scheme: dark)'),
+    prefersReducedMotion: mq('(prefers-reduced-motion: reduce)'),
+    prefersContrast:      mq('(prefers-contrast: more)'),
+
+    // Trust / bot signals
+    cookiesEnabled: navigator.cookieEnabled,
+    doNotTrack:     navigator.doNotTrack,
+    isWebDriver:    navigator.webdriver || false,
+
+    // UA client hints (Chromium only)
+    uaBrands:   uaData ? uaData.brands?.map(b => `${b.brand} ${b.version}`).join(', ') : null,
+    uaMobile:   uaData?.mobile ?? null,
+    uaPlatform: uaData?.platform ?? null,
+
+    // Source
+    referrer:    document.referrer || null,
+    pageUrl:     window.location.href,
+    userAgent:   ua,
+    collectedAt: new Date().toISOString(),
   };
 }
 

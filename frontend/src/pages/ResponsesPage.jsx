@@ -78,6 +78,168 @@ function DrawerSection({ title, children }) {
   );
 }
 
+function DeviceInfoPanel({ response }) {
+  const [open, setOpen] = useState(false);
+  const dev = response.device_info || {};
+  const hasDevice = Object.keys(dev).length > 0;
+
+  const val = (v, transform) => {
+    if (v === null || v === undefined) return null;
+    return transform ? transform(v) : String(v);
+  };
+
+  // Summary line shown when collapsed
+  const summary = [
+    dev.countryFlag,
+    dev.os && dev.osVersion ? `${dev.os} ${dev.osVersion}` : dev.os,
+    dev.browser && dev.browserVersion ? `${dev.browser} ${dev.browserVersion}` : dev.browser,
+    dev.deviceType,
+    dev.ip ? `IP: ${dev.ip}` : null,
+  ].filter(Boolean).join(' · ');
+
+  const Group = ({ emoji, title, children }) => (
+    <div style={{ marginBottom: 14 }}>
+      <div style={{
+        fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.1em',
+        color: '#ccc', marginBottom: 4, fontWeight: 400, display: 'flex', alignItems: 'center', gap: 4,
+      }}>
+        <span>{emoji}</span> {title}
+      </div>
+      {children}
+    </div>
+  );
+
+  const Row = ({ label, value }) => {
+    if (value === null || value === undefined || value === '' || value === 'null') return null;
+    return (
+      <div style={{
+        display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
+        padding: '5px 0', borderBottom: '1px solid #f2eee8', fontSize: 11,
+      }}>
+        <span style={{ color: '#bbb', fontWeight: 300, flex: '0 0 130px' }}>{label}</span>
+        <span style={{
+          color: 'var(--plum-dark)', fontWeight: 400, textAlign: 'right', flex: 1,
+          wordBreak: 'break-all', fontSize: 11,
+        }}>{String(value)}</span>
+      </div>
+    );
+  };
+
+  const bool = v => (v === true || v === 'true') ? 'Yes' : (v === false || v === 'false') ? 'No' : String(v ?? '—');
+
+  return (
+    <div style={{
+      border: '1px solid var(--beige-mid)', borderRadius: 10, overflow: 'hidden',
+      marginBottom: 20,
+    }}>
+      {/* Clickable header */}
+      <div
+        onClick={() => setOpen(o => !o)}
+        style={{
+          padding: '10px 14px', cursor: 'pointer',
+          background: open ? '#faf7f4' : '#fff',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          transition: 'background 0.15s', userSelect: 'none',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontSize: 14 }}>📡</span>
+          <div>
+            <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#bbb', fontWeight: 400 }}>
+              Device & Session
+            </div>
+            {!open && hasDevice && (
+              <div style={{ fontSize: 11, color: 'var(--plum-dark)', fontWeight: 300, marginTop: 2 }}>
+                {summary || 'Tap to expand'}
+              </div>
+            )}
+          </div>
+        </div>
+        <span style={{
+          fontSize: 10, color: '#bbb',
+          transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+          transition: 'transform 0.2s', display: 'inline-block',
+        }}>▼</span>
+      </div>
+
+      {/* Expanded body */}
+      {open && (
+        <div style={{ padding: '14px 14px 8px', background: '#faf7f4', borderTop: '1px solid var(--beige-mid)' }}>
+          {!hasDevice ? (
+            <div style={{ fontSize: 12, color: '#bbb', fontWeight: 300 }}>No device info captured</div>
+          ) : (
+            <>
+              <Group emoji="📱" title="Device">
+                <Row label="IP Address"   value={dev.ip} />
+                <Row label="OS"           value={dev.os && dev.osVersion ? `${dev.os} ${dev.osVersion}` : dev.os} />
+                <Row label="Browser"      value={dev.browser && dev.browserVersion ? `${dev.browser} ${dev.browserVersion}` : dev.browser} />
+                <Row label="Device Type"  value={dev.deviceType} />
+                <Row label="User Agent"   value={dev.userAgent} />
+                <Row label="UA Brands"    value={dev.uaBrands} />
+                <Row label="UA Platform"  value={dev.uaPlatform} />
+                <Row label="UA Mobile"    value={dev.uaMobile !== null && dev.uaMobile !== undefined ? bool(dev.uaMobile) : null} />
+              </Group>
+
+              <Group emoji="🖥️" title="Screen">
+                <Row label="Screen"        value={dev.screenWidth && dev.screenHeight ? `${dev.screenWidth} × ${dev.screenHeight}` : null} />
+                <Row label="Avail. Screen" value={dev.screenAvailWidth && dev.screenAvailHeight ? `${dev.screenAvailWidth} × ${dev.screenAvailHeight}` : null} />
+                <Row label="Viewport"      value={dev.viewportWidth && dev.viewportHeight ? `${dev.viewportWidth} × ${dev.viewportHeight}` : null} />
+                <Row label="Pixel Ratio"   value={dev.devicePixelRatio} />
+                <Row label="Color Depth"   value={dev.colorDepth ? `${dev.colorDepth}-bit` : null} />
+                <Row label="Orientation"   value={dev.screenOrientation} />
+              </Group>
+
+              <Group emoji="🌍" title="Locale & Location">
+                <Row label="Country"        value={dev.countryFlag && dev.region ? `${dev.countryFlag} ${dev.region}` : dev.region} />
+                <Row label="Language"       value={dev.language} />
+                <Row label="All Languages"  value={dev.languages} />
+                <Row label="Timezone"       value={dev.timezone} />
+                <Row label="UTC Offset"     value={dev.timezoneOffset !== null && dev.timezoneOffset !== undefined ? `UTC${dev.timezoneOffset <= 0 ? '+' : ''}${-dev.timezoneOffset / 60}h` : null} />
+              </Group>
+
+              <Group emoji="⚙️" title="Hardware">
+                <Row label="Device Memory" value={dev.deviceMemoryGB ? `≈ ${dev.deviceMemoryGB} GB` : null} />
+                <Row label="CPU Cores"     value={dev.cpuCores} />
+                <Row label="Touch Points"  value={dev.maxTouchPoints} />
+                <Row label="Touch Support" value={dev.touchSupport !== undefined ? bool(dev.touchSupport) : null} />
+              </Group>
+
+              <Group emoji="📶" title="Network">
+                <Row label="Connection"  value={dev.connectionType} />
+                <Row label="Downlink"    value={dev.connectionDownlink !== null && dev.connectionDownlink !== undefined ? `${dev.connectionDownlink} Mbps` : null} />
+                <Row label="RTT"         value={dev.connectionRtt !== null && dev.connectionRtt !== undefined ? `${dev.connectionRtt} ms` : null} />
+                <Row label="Data Saver"  value={dev.connectionSaveData !== null && dev.connectionSaveData !== undefined ? bool(dev.connectionSaveData) : null} />
+              </Group>
+
+              <Group emoji="🔒" title="Preferences & Trust">
+                <Row label="Dark Mode"       value={dev.prefersDark !== null && dev.prefersDark !== undefined ? bool(dev.prefersDark) : null} />
+                <Row label="Reduced Motion"  value={dev.prefersReducedMotion !== null && dev.prefersReducedMotion !== undefined ? bool(dev.prefersReducedMotion) : null} />
+                <Row label="High Contrast"   value={dev.prefersContrast !== null && dev.prefersContrast !== undefined ? bool(dev.prefersContrast) : null} />
+                <Row label="Cookies"         value={dev.cookiesEnabled !== undefined ? bool(dev.cookiesEnabled) : null} />
+                <Row label="Do Not Track"    value={dev.doNotTrack === '1' ? 'On' : dev.doNotTrack === '0' ? 'Off' : dev.doNotTrack ?? null} />
+                <Row label="Bot/WebDriver"   value={dev.isWebDriver !== undefined ? bool(dev.isWebDriver) : null} />
+              </Group>
+
+              <Group emoji="🔗" title="Source">
+                <Row label="Referrer"     value={dev.referrer} />
+                <Row label="Page URL"     value={dev.pageUrl} />
+                <Row label="Collected At" value={dev.collectedAt ? new Date(dev.collectedAt).toLocaleString() : null} />
+              </Group>
+            </>
+          )}
+
+          {/* Session meta always shown */}
+          <Group emoji="🎫" title="Session">
+            <Row label="Session ID"       value={response.session_id ? `…${response.session_id.slice(-8)}` : null} />
+            <Row label="Completion Step"  value={response.completion_step ?? null} />
+            <Row label="Complete"         value={response.is_complete !== undefined ? bool(response.is_complete) : null} />
+          </Group>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function DetailDrawer({ response, onClose, onDelete }) {
   if (!response) return null;
   const d = response.data || {};
@@ -171,72 +333,8 @@ function DetailDrawer({ response, onClose, onDelete }) {
             <DrawerRow label="Consent" value={d.consent ? 'Yes' : 'No'} />
           </DrawerSection>
 
-          {/* Device & Session info */}
-          {(() => {
-            const dev = response.device_info || {};
-            const hasDevice = Object.keys(dev).length > 0;
-
-            const labelMap = {
-              ip: 'IP Address',
-              os: 'Operating System',
-              browser: 'Browser',
-              deviceType: 'Device Type',
-              screenWidth: null,   // merged below
-              screenHeight: null,  // merged below
-              viewportWidth: null, // merged below
-              viewportHeight: null,// merged below
-              devicePixelRatio: 'Pixel Ratio',
-              language: 'Language',
-              timezone: 'Timezone',
-              touchSupport: 'Touch',
-              connection: 'Network',
-              referrer: 'Referrer',
-              userAgent: 'User Agent',
-              collectedAt: 'Collected At',
-            };
-
-            // Build a display list — merge screen/viewport pairs
-            const rows = [];
-            const shown = new Set();
-            if (dev.screenWidth != null && dev.screenHeight != null) {
-              rows.push({ label: 'Screen', value: `${dev.screenWidth} × ${dev.screenHeight}` });
-              shown.add('screenWidth'); shown.add('screenHeight');
-            }
-            if (dev.viewportWidth != null && dev.viewportHeight != null) {
-              rows.push({ label: 'Viewport', value: `${dev.viewportWidth} × ${dev.viewportHeight}` });
-              shown.add('viewportWidth'); shown.add('viewportHeight');
-            }
-            for (const [k, v] of Object.entries(dev)) {
-              if (shown.has(k) || labelMap[k] === null) continue;
-              const label = labelMap[k] || k;
-              let value;
-              if (k === 'connection' && v && typeof v === 'object') {
-                value = `${v.type || v.effectiveType || ''}${v.downlink ? ` · ${v.downlink} Mbps` : ''}`.trim() || '—';
-              } else if (k === 'touchSupport') {
-                value = v ? 'Yes' : 'No';
-              } else if (k === 'collectedAt' && v) {
-                value = new Date(v).toLocaleString();
-              } else if (typeof v === 'object') {
-                value = JSON.stringify(v);
-              } else {
-                value = String(v ?? '—');
-              }
-              rows.push({ label, value });
-            }
-
-            return (
-              <DrawerSection title="Device & Session">
-                {hasDevice ? rows.map(r => (
-                  <DrawerRow key={r.label} label={r.label} value={r.value} />
-                )) : (
-                  <div style={{ fontSize: 12, color: '#bbb', fontWeight: 300, padding: '6px 0' }}>No device info captured</div>
-                )}
-                <DrawerRow label="Session ID" value={response.session_id ? `…${response.session_id.slice(-8)}` : '—'} />
-                <DrawerRow label="Completion Step" value={response.completion_step ?? '—'} />
-                <DrawerRow label="Complete" value={response.is_complete ? 'Yes' : 'No'} />
-              </DrawerSection>
-            );
-          })()}
+          {/* Collapsible device info */}
+          <DeviceInfoPanel response={response} />
         </div>
 
         {/* Footer */}
@@ -283,6 +381,8 @@ function DetailDrawer({ response, onClose, onDelete }) {
     </>
   );
 }
+
+
 
 // ── Main Page ────────────────────────────────────────────────────────────────
 
