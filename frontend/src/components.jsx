@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 
 /* ── Button ── */
 export function Btn({ children, variant = 'primary', size = 'md', onClick, disabled, style }) {
@@ -123,10 +123,12 @@ export function OptionItem({ label, selected, onClick }) {
         display: 'flex', alignItems: 'center', gap: 14,
         border: `1.5px solid ${selected ? 'var(--gold)' : 'var(--beige-dark)'}`,
         borderRadius: 'var(--radius-md)', padding: '13px 18px',
-        cursor: 'pointer', transition: 'all 0.2s',
+        cursor: 'pointer', transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
         background: selected ? 'var(--gold-light)' : 'var(--beige)',
         color: selected ? 'var(--plum-dark)' : 'var(--text-dark)',
         fontSize: 14, fontWeight: selected ? 400 : 300,
+        transform: selected ? 'scale(1.01)' : 'scale(1)',
+        touchAction: 'manipulation',
       }}
     >
       <div style={{
@@ -150,11 +152,14 @@ export function MultiTag({ label, selected, onClick }) {
       onClick={onClick}
       style={{
         padding: '9px 20px', border: `1.5px solid ${selected ? 'var(--gold)' : 'var(--beige-dark)'}`,
-        borderRadius: 20, fontSize: 13, cursor: 'pointer', transition: 'all 0.2s',
+        borderRadius: 20, fontSize: 13, cursor: 'pointer',
+        transition: 'all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
         background: selected ? 'var(--gold)' : 'var(--beige)',
         color: selected ? 'var(--plum-dark)' : 'var(--text-dark)',
         fontWeight: selected ? 400 : 300,
         userSelect: 'none',
+        transform: selected ? 'scale(1.04)' : 'scale(1)',
+        touchAction: 'manipulation',
       }}
     >
       {label}
@@ -164,9 +169,25 @@ export function MultiTag({ label, selected, onClick }) {
 
 /* ── StyleCard ── */
 export function StyleCard({ name, brands, selected, onClick, photoUrl }) {
+  const [hovered, setHovered] = useState(false);
+
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    e.currentTarget.style.transform = `perspective(600px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg) scale(1.02)`;
+  };
+  const handleMouseLeave = (e) => {
+    e.currentTarget.style.transform = 'perspective(600px) rotateY(0deg) rotateX(0deg) scale(1)';
+    setHovered(false);
+  };
+
   return (
     <div
       onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       style={{
         position: 'relative',
         aspectRatio: '1 / 1',
@@ -174,8 +195,11 @@ export function StyleCard({ name, brands, selected, onClick, photoUrl }) {
         overflow: 'hidden',
         border: `2.5px solid ${selected ? 'var(--gold)' : 'transparent'}`,
         cursor: 'pointer',
-        transition: 'border-color 0.25s',
+        transition: 'border-color 0.25s, transform 0.15s ease',
         background: 'linear-gradient(135deg, var(--plum-dark), var(--plum))',
+        willChange: 'transform',
+        transformStyle: 'preserve-3d',
+        touchAction: 'manipulation',
       }}
     >
       {/* Photo */}
@@ -183,7 +207,11 @@ export function StyleCard({ name, brands, selected, onClick, photoUrl }) {
         <img
           src={photoUrl}
           alt={name}
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+          style={{
+            position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover',
+            transition: 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            transform: hovered ? 'scale(1.08)' : 'scale(1)',
+          }}
           onError={e => { e.target.style.display = 'none'; }}
         />
       )}

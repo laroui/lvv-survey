@@ -8,23 +8,30 @@ export default function FormCard({ form }) {
     <div
       onClick={() => navigate(`/forms/${form.id}`)}
       style={{
-        background: '#fff',
-        border: '1px solid var(--beige-mid)',
-        borderRadius: 12,
+        background: 'rgba(255,255,255,0.85)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        border: '1px solid rgba(216,207,189,0.6)',
+        borderRadius: 16,
         padding: '1.5rem',
         cursor: 'pointer',
-        transition: 'box-shadow 0.2s, transform 0.2s',
+        transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
         display: 'flex',
         flexDirection: 'column',
         gap: 12,
+        boxShadow: '0 2px 8px rgba(42,26,34,0.06)',
       }}
       onMouseEnter={e => {
-        e.currentTarget.style.boxShadow = '0 4px 24px rgba(82,56,73,0.10)';
-        e.currentTarget.style.transform = 'translateY(-2px)';
+        e.currentTarget.style.background = 'rgba(255,255,255,0.97)';
+        e.currentTarget.style.boxShadow = '0 20px 40px rgba(42,26,34,0.12), 0 0 0 1px rgba(201,168,76,0.2)';
+        e.currentTarget.style.transform = 'translateY(-4px)';
+        e.currentTarget.style.borderColor = 'rgba(201,168,76,0.4)';
       }}
       onMouseLeave={e => {
-        e.currentTarget.style.boxShadow = 'none';
+        e.currentTarget.style.background = 'rgba(255,255,255,0.85)';
+        e.currentTarget.style.boxShadow = '0 2px 8px rgba(42,26,34,0.06)';
         e.currentTarget.style.transform = 'translateY(0)';
+        e.currentTarget.style.borderColor = 'rgba(216,207,189,0.6)';
       }}
     >
       {/* Header */}
