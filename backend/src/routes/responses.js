@@ -79,6 +79,8 @@ router.put('/session', async (req, res, next) => {
 
     const step = completionStep ?? 0;
     const complete = isComplete ?? false;
+    // Use a plain JS value — Neon sql fragments cannot be nested as parameter values
+    const submittedAt = complete ? new Date().toISOString() : null;
 
     const [response] = await sql`
       INSERT INTO responses (form_id, data, device_info, completion_step, is_complete, session_id, submitted_at)
@@ -89,7 +91,7 @@ router.put('/session', async (req, res, next) => {
         ${step},
         ${complete},
         ${sessionId},
-        ${complete ? sql`now()` : sql`null`}
+        ${submittedAt}
       )
       ON CONFLICT (session_id) DO UPDATE SET
         data            = EXCLUDED.data,
@@ -97,7 +99,7 @@ router.put('/session', async (req, res, next) => {
         completion_step = EXCLUDED.completion_step,
         is_complete     = EXCLUDED.is_complete,
         submitted_at    = CASE
-          WHEN EXCLUDED.is_complete AND responses.submitted_at IS NULL THEN now()
+          WHEN EXCLUDED.is_complete AND responses.submitted_at IS NULL THEN EXCLUDED.submitted_at
           WHEN EXCLUDED.is_complete THEN responses.submitted_at
           ELSE responses.submitted_at
         END
