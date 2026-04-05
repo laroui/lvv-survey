@@ -443,20 +443,19 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
           </div>
         </div>
 
-        {/* Logo footer */}
-        {/* Logo footer — each logo lives in an equal 120×52 box so neither dominates */}
-        <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 20, paddingTop: '2.5rem', width: '100%', maxWidth: 480 }}>
-          {/* LVV logo box */}
-          <div style={{ width: 'clamp(90px, 22vw, 130px)', height: 52, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+        {/* Logo footer — each half is flex:1 so they share full width equally */}
+        <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', paddingTop: '2.5rem', width: '100%', boxSizing: 'border-box' }}>
+          {/* LVV logo — right-aligned inside its half */}
+          <div style={{ flex: 1, height: 56, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 12 }}>
             <img
               src="/images/LVV Logo Black transparent.png"
               alt="La Vallée Village"
               style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: 0.85 }}
             />
           </div>
-          <div style={{ fontSize: 20, color: 'rgba(245,240,230,0.35)', fontWeight: 300, lineHeight: 1, flexShrink: 0 }}>×</div>
-          {/* Partner logo box — same fixed dimensions */}
-          <div style={{ width: 'clamp(90px, 22vw, 130px)', height: 52, display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+          <div style={{ fontSize: 20, color: 'rgba(245,240,230,0.35)', fontWeight: 300, lineHeight: 1, flexShrink: 0, padding: '0 4px' }}>×</div>
+          {/* Partner logo — left-aligned inside its half */}
+          <div style={{ flex: 1, height: 56, display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingLeft: 12 }}>
             {partnerLogoUrl ? (
               <img
                 src={partnerLogoUrl} alt={displayPartner}
