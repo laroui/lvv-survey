@@ -14,8 +14,22 @@ export async function runMigrations() {
   await sql`ALTER TABLE responses ADD COLUMN IF NOT EXISTS device_info JSONB DEFAULT '{}'`;
   await sql`ALTER TABLE responses ADD COLUMN IF NOT EXISTS completion_step INTEGER DEFAULT 0`;
   await sql`ALTER TABLE responses ADD COLUMN IF NOT EXISTS is_complete BOOLEAN DEFAULT false`;
-  // Drop old partial index if it exists (partial indexes don't work with ON CONFLICT without exact WHERE match)
-  await sql`DROP INDEX IF EXISTS responses_session_id_unique`;
+  // Drop old constraint/index if it exists so we can recreate it cleanly.
+  // Must drop as CONSTRAINT (not INDEX) when it was created via ADD CONSTRAINT,
+  // because PostgreSQL won't allow DROP INDEX on a constraint-backed index.
+  await sql`
+    DO $$ BEGIN
+      IF EXISTS (
+        SELECT 1 FROM pg_constraint WHERE conname = 'responses_session_id_unique'
+      ) THEN
+        ALTER TABLE responses DROP CONSTRAINT responses_session_id_unique;
+      ELSIF EXISTS (
+        SELECT 1 FROM pg_indexes WHERE indexname = 'responses_session_id_unique'
+      ) THEN
+        DROP INDEX responses_session_id_unique;
+      END IF;
+    END $$
+  `;
   // Create a proper unique constraint so ON CONFLICT (session_id) works
   // NULL values are always considered distinct in PostgreSQL so multiple NULL session_ids are allowed
   await sql`
