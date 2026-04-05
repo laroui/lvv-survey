@@ -170,6 +170,73 @@ function DetailDrawer({ response, onClose, onDelete }) {
             <DrawerRow label="PS Mode" value={d.psMode} />
             <DrawerRow label="Consent" value={d.consent ? 'Yes' : 'No'} />
           </DrawerSection>
+
+          {/* Device & Session info */}
+          {(() => {
+            const dev = response.device_info || {};
+            const hasDevice = Object.keys(dev).length > 0;
+
+            const labelMap = {
+              ip: 'IP Address',
+              os: 'Operating System',
+              browser: 'Browser',
+              deviceType: 'Device Type',
+              screenWidth: null,   // merged below
+              screenHeight: null,  // merged below
+              viewportWidth: null, // merged below
+              viewportHeight: null,// merged below
+              devicePixelRatio: 'Pixel Ratio',
+              language: 'Language',
+              timezone: 'Timezone',
+              touchSupport: 'Touch',
+              connection: 'Network',
+              referrer: 'Referrer',
+              userAgent: 'User Agent',
+              collectedAt: 'Collected At',
+            };
+
+            // Build a display list — merge screen/viewport pairs
+            const rows = [];
+            const shown = new Set();
+            if (dev.screenWidth != null && dev.screenHeight != null) {
+              rows.push({ label: 'Screen', value: `${dev.screenWidth} × ${dev.screenHeight}` });
+              shown.add('screenWidth'); shown.add('screenHeight');
+            }
+            if (dev.viewportWidth != null && dev.viewportHeight != null) {
+              rows.push({ label: 'Viewport', value: `${dev.viewportWidth} × ${dev.viewportHeight}` });
+              shown.add('viewportWidth'); shown.add('viewportHeight');
+            }
+            for (const [k, v] of Object.entries(dev)) {
+              if (shown.has(k) || labelMap[k] === null) continue;
+              const label = labelMap[k] || k;
+              let value;
+              if (k === 'connection' && v && typeof v === 'object') {
+                value = `${v.type || v.effectiveType || ''}${v.downlink ? ` · ${v.downlink} Mbps` : ''}`.trim() || '—';
+              } else if (k === 'touchSupport') {
+                value = v ? 'Yes' : 'No';
+              } else if (k === 'collectedAt' && v) {
+                value = new Date(v).toLocaleString();
+              } else if (typeof v === 'object') {
+                value = JSON.stringify(v);
+              } else {
+                value = String(v ?? '—');
+              }
+              rows.push({ label, value });
+            }
+
+            return (
+              <DrawerSection title="Device & Session">
+                {hasDevice ? rows.map(r => (
+                  <DrawerRow key={r.label} label={r.label} value={r.value} />
+                )) : (
+                  <div style={{ fontSize: 12, color: '#bbb', fontWeight: 300, padding: '6px 0' }}>No device info captured</div>
+                )}
+                <DrawerRow label="Session ID" value={response.session_id ? `…${response.session_id.slice(-8)}` : '—'} />
+                <DrawerRow label="Completion Step" value={response.completion_step ?? '—'} />
+                <DrawerRow label="Complete" value={response.is_complete ? 'Yes' : 'No'} />
+              </DrawerSection>
+            );
+          })()}
         </div>
 
         {/* Footer */}
