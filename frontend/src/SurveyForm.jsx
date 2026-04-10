@@ -227,7 +227,7 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
     if (!storageKey) return { ...DEFAULT_FORM };
     try {
       const saved = JSON.parse(localStorage.getItem(storageKey) || '{}').form;
-      return saved ? { ...DEFAULT_FORM, ...saved } : { ...DEFAULT_FORM };
+      return saved ? { ...DEFAULT_FORM, ...saved, consent: true } : { ...DEFAULT_FORM };
     } catch { return { ...DEFAULT_FORM }; }
   });
 
