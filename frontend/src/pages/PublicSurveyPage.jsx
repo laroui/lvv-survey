@@ -251,11 +251,11 @@ export default function PublicSurveyPage() {
                 width: 64, height: 64, borderRadius: '50%',
                 background: 'rgba(201,168,76,0.15)', border: '1px solid rgba(201,168,76,0.35)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                margin: '0 auto 1.75rem', fontSize: 78, color: 'rgba(201,168,76,0.92)',
+                margin: '0 auto 1.75rem', color: 'rgba(201,168,76,0.92)',
                 opacity: 0, overflow: 'visible', position: 'relative',
               }}
             >
-              ✦
+              <span style={{ fontSize: 78, lineHeight: 1, display: 'block' }}>✦</span>
               {SPARKLE_OFFSETS.map(({ tx, ty }, i) => (
                 <span
                   key={i}
@@ -283,7 +283,7 @@ export default function PublicSurveyPage() {
               className="thanks-msg"
               style={{
                 fontFamily: natFont || 'var(--font-sans)',
-                fontSize: 15, color: 'rgba(245,240,230,0.7)', lineHeight: 1.8,
+                fontSize: 17, color: 'rgba(245,240,230,0.7)', lineHeight: 1.8,
                 fontWeight: 300, maxWidth: 320, margin: '0 auto',
               }}
             >
