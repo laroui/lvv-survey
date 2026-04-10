@@ -10,6 +10,7 @@ const DEFAULT_CONFIG = {
   hotelName: '',
   language: 'en',
   bilingualEnabled: true,
+  enabledLanguages: ['en', 'fr'],
   questions: { sizing: true, lifestyle: true, travel: true, events: true },
   thankYouMessage: 'Your Personal Shopper will be in touch before your arrival.',
   thankYouMessageFR: '',
@@ -238,6 +239,31 @@ export default function FormBuilderPage() {
                   <option value="both">Bilingual (EN / FR)</option>
                 </select>
               </FieldLabel>
+
+              <div style={{ marginTop: '1.5rem', marginBottom: 16 }}>
+                <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#999', marginBottom: 4 }}>
+                  Optional Languages
+                </div>
+                <div style={{ fontSize: 11, color: '#bbb', marginBottom: 8, fontWeight: 300 }}>
+                  English &amp; Français are always available.
+                </div>
+                {[{ code: 'es', label: 'Español (Spanish)' }, { code: 'ar', label: 'العربية (Arabic)' }].map(({ code, label }) => {
+                  const langs = config.enabledLanguages || ['en', 'fr'];
+                  return (
+                    <Toggle
+                      key={code}
+                      label={label}
+                      checked={langs.includes(code)}
+                      onChange={on => {
+                        const next = on
+                          ? [...langs.filter(l => l !== code), code]
+                          : langs.filter(l => l !== code);
+                        setConfig(c => ({ ...c, enabledLanguages: next }));
+                      }}
+                    />
+                  );
+                })}
+              </div>
 
               <div style={{ marginTop: '1.5rem', marginBottom: 16 }}>
                 <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#999', marginBottom: 4 }}>

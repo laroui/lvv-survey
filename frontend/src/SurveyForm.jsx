@@ -189,7 +189,8 @@ function Wrapper({ pct, hotelName, children, rtl, stepKey }) {
 }
 
 export default function SurveyForm({ onComplete, config = {}, partnerName, partnerLogoUrl, formToken }) {
-  const hotelName       = config?.hotelName  || partnerName || 'The Peninsula Paris';
+  const hotelName        = config?.hotelName  || partnerName || 'The Peninsula Paris';
+  const enabledLanguages = config?.enabledLanguages || ['en', 'fr'];
   const stylesFemale    = (config?.styles?.female || STYLES_FEMALE).map(s => ({
     ...s, photoUrl: s.photoUrl || STYLES_FEMALE.find(d => d.id === s.id)?.photoUrl || null,
   }));
@@ -475,12 +476,13 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
 
   /* ── STEP 0: LANGUAGE ── */
   if (step === 0) {
-    const LANGS = [
+    const ALL_LANGS = [
       { code: 'en', label: 'English' },
       { code: 'fr', label: 'Français' },
       { code: 'es', label: 'Español' },
       { code: 'ar', label: 'العربية' },
     ];
+    const LANGS = ALL_LANGS.filter(l => enabledLanguages.includes(l.code));
     return (
       <Wrapper pct={pct} hotelName={hotelName} {...wp}>
         <StepLabel>Language / Langue / Idioma / اللغة</StepLabel>
