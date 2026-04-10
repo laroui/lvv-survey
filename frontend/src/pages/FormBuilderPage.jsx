@@ -12,19 +12,19 @@ const DEFAULT_CONFIG = {
   bilingualEnabled: true,
   enabledLanguages: ['en', 'fr'],
   questions: { sizing: true, brands: true, lifestyle: true, travel: true, events: true },
-  thankYouMessage: 'Your Personal Shopper will be in touch before your arrival.',
-  thankYouMessageFR: '',
-  thankYouMessageES: '',
-  thankYouMessageAR: '',
-  thankYouMessageZH: '',
-  thankYouMessageHI: '',
-  thankYouMessageBN: '',
-  thankYouMessagePT: '',
-  thankYouMessageRU: '',
-  thankYouMessageJA: '',
-  thankYouMessageDE: '',
-  thankYouMessageKO: '',
-  thankYouMessageIT: '',
+  thankYouMessage:    'Your Personal Shopper will be in touch before your arrival. We look forward to welcoming you to La Vallée Village.',
+  thankYouMessageFR:  'Votre Personal Shopper vous contactera avant votre arrivée. Nous nous réjouissons de vous accueillir à La Vallée Village.',
+  thankYouMessageES:  'Su Personal Shopper se pondrá en contacto antes de su llegada. Estamos encantados de darle la bienvenida a La Vallée Village.',
+  thankYouMessageAR:  'سيتواصل معك المتسوق الشخصي قبل وصولك. نتطلع إلى الترحيب بك في لا فاليه فيلاج.',
+  thankYouMessageZH:  '您的个人购物顾问将在您到达前与您联系。期待在拉瓦莱村与您相遇。',
+  thankYouMessageHI:  'आपके आगमन से पहले आपका पर्सनल शॉपर आपसे संपर्क करेगा। हम La Vallée Village में आपका स्वागत करने के लिए उत्सुक हैं।',
+  thankYouMessageBN:  'আপনার আগমনের আগে আপনার পার্সোনাল শপার যোগাযোগ করবেন। আমরা La Vallée Village-এ আপনাকে স্বাগত জানাতে অপেক্ষায় আছি।',
+  thankYouMessagePT:  'O seu Personal Shopper entrará em contacto antes da sua chegada. Aguardamos com entusiasmo recebê-lo em La Vallée Village.',
+  thankYouMessageRU:  'Ваш персональный шоппер свяжется с вами до приезда. Мы с нетерпением ждём встречи с вами в La Vallée Village.',
+  thankYouMessageJA:  'ご到着前にパーソナルショッパーよりご連絡いたします。La Vallée Villageにてお会いできることを楽しみにしております。',
+  thankYouMessageDE:  'Ihr Personal Shopper wird sich vor Ihrer Ankunft bei Ihnen melden. Wir freuen uns darauf, Sie in La Vallée Village willkommen zu heißen.',
+  thankYouMessageKO:  '도착 전에 퍼스널 쇼퍼가 연락드릴 예정입니다. La Vallée Village에서 여러분을 맞이하게 되어 기쁩니다.',
+  thankYouMessageIT:  "Il suo Personal Shopper la contatterà prima del suo arrivo. Non vediamo l'ora di darle il benvenuto a La Vallée Village.",
   styles: null,
   categories: null,
   purposes: null,
@@ -96,7 +96,13 @@ export default function FormBuilderPage() {
           if (d.success) {
             setTitle(d.data.title);
             setPartnerId(d.data.partner_id);
-            setConfig({ ...DEFAULT_CONFIG, ...d.data.config });
+            const merged = { ...DEFAULT_CONFIG, ...d.data.config };
+            // Fill empty translation fields with defaults so admins see suggested copy
+            const msgKeys = ['thankYouMessageFR','thankYouMessageES','thankYouMessageAR',
+              'thankYouMessageZH','thankYouMessageHI','thankYouMessageBN','thankYouMessagePT',
+              'thankYouMessageRU','thankYouMessageJA','thankYouMessageDE','thankYouMessageKO','thankYouMessageIT'];
+            msgKeys.forEach(k => { if (!merged[k]) merged[k] = DEFAULT_CONFIG[k]; });
+            setConfig(merged);
           }
         });
     }
