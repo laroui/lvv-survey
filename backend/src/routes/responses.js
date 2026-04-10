@@ -110,33 +110,33 @@ router.put('/session', async (req, res, next) => {
     const enrichedDeviceInfo = { ...(deviceInfo || {}), ip, ...(ipGeo ? { ipGeo } : {}) };
 
     const step = completionStep ?? 0;
-    // Use a plain JS value — Neon sql fragments cannot be nested as parameter values
     const submittedAt = complete ? new Date().toISOString() : null;
 
-    const [response] = await sql`
-      INSERT INTO responses (form_id, data, device_info, completion_step, is_complete, session_id, submitted_at)
-      VALUES (
-        ${form.id},
-        ${JSON.stringify(data || {})},
-        ${JSON.stringify(enrichedDeviceInfo)},
-        ${step},
-        ${complete},
-        ${sessionId},
-        ${submittedAt}
-      )
-      ON CONFLICT (session_id) DO UPDATE SET
-        data            = EXCLUDED.data,
-        device_info     = EXCLUDED.device_info,
-        completion_step = EXCLUDED.completion_step,
-        is_complete     = EXCLUDED.is_complete,
-        submitted_at    = CASE
-          WHEN EXCLUDED.is_complete AND responses.submitted_at IS NULL THEN EXCLUDED.submitted_at
-          WHEN EXCLUDED.is_complete THEN responses.submitted_at
-          ELSE responses.submitted_at
-        END
-      RETURNING id
-    `;
-    res.json({ success: true, responseId: response.id });
+    // Explicit upsert — avoids ON CONFLICT which requires a pre-existing unique constraint
+    const [existing] = await sql`SELECT id, submitted_at FROM responses WHERE session_id = ${sessionId}`;
+
+    let responseId;
+    if (existing) {
+      const keepTs = existing.submitted_at || submittedAt;
+      await sql`
+        UPDATE responses SET
+          data            = ${JSON.stringify(data || {})},
+          device_info     = ${JSON.stringify(enrichedDeviceInfo)},
+          completion_step = ${step},
+          is_complete     = ${complete},
+          submitted_at    = ${complete ? keepTs : existing.submitted_at}
+        WHERE session_id = ${sessionId}
+      `;
+      responseId = existing.id;
+    } else {
+      const [inserted] = await sql`
+        INSERT INTO responses (form_id, data, device_info, completion_step, is_complete, session_id, submitted_at)
+        VALUES (${form.id}, ${JSON.stringify(data || {})}, ${JSON.stringify(enrichedDeviceInfo)}, ${step}, ${complete}, ${sessionId}, ${submittedAt})
+        RETURNING id
+      `;
+      responseId = inserted.id;
+    }
+    res.json({ success: true, responseId });
   } catch (err) { next(err); }
 });
 
