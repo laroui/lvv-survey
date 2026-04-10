@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import {
-  Btn, Card, Field, TextInput, OptionItem, MultiTag,
+  Btn, Field, TextInput, OptionItem, MultiTag,
   StyleCard, BrandTag, StepLabel, StepQuestion, NavBtns,
-  ProgressBar, ReviewRow, Divider,
+  ProgressBar,
 } from './components';
 import PhoneInput from './components/PhoneInput.jsx';
 import NationalityInput from './components/NationalityInput.jsx';
@@ -12,7 +12,7 @@ import {
   SIZING_MAP, SIZING_VALUES, NATIONALITY_LANGUAGES,
 } from './data';
 
-const TOTAL_STEPS = 13;
+const TOTAL_STEPS = 12;
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 function genId() {
@@ -134,7 +134,7 @@ const DEFAULT_FORM = {
   styles: [], categories: [], brands: [], lifestyle: [],
   travel: [], travelCustom: '',
   events: [], eventCustom: '',
-  consent: false,
+  consent: true,
 };
 
 // 4-language helper: en / fr / es / ar — falls back to English
@@ -518,7 +518,7 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
   /* ── STEP 1: IDENTITY ── */
   if (step === 1) return (
     <Wrapper pct={pct} hotelName={hotelName} {...wp}>
-      <StepLabel>{t(lang, 'Step 1 of 13', 'Étape 1 sur 13', 'Paso 1 de 13', 'الخطوة 1 من 13')}</StepLabel>
+      <StepLabel>{t(lang, 'Step 1 of 12', 'Étape 1 sur 12', 'Paso 1 de 12', 'الخطوة 1 من 12')}</StepLabel>
       <StepQuestion>{t(lang, 'How should we call you?', 'Comment vous appeler ?', '¿Cómo debemos llamarle?', 'كيف يجب أن نناديك؟')}</StepQuestion>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
         <Field label={t(lang, 'First Name', 'Prénom', 'Nombre', 'الاسم الأول')}>
@@ -548,7 +548,7 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
   /* ── STEP 2: GENDER + NATIONALITY ── */
   if (step === 2) return (
     <Wrapper pct={pct} hotelName={hotelName} {...wp}>
-      <StepLabel>{t(lang, 'Step 2 of 13', 'Étape 2 sur 13', 'Paso 2 de 13', 'الخطوة 2 من 13')}</StepLabel>
+      <StepLabel>{t(lang, 'Step 2 of 12', 'Étape 2 sur 12', 'Paso 2 de 12', 'الخطوة 2 من 12')}</StepLabel>
       <StepQuestion>{t(lang, 'How should we address you?', 'Comment vous adresser ?', '¿Cómo debemos dirigirnos a usted?', 'كيف يجب أن نخاطبك؟')}</StepQuestion>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 28 }}>
         {['Ms', 'Mr'].map(g => (
@@ -578,7 +578,7 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
   if (step === 3) return (
     <Wrapper pct={pct} hotelName={hotelName} {...wp}>
       <LangUpgradeBanner />
-      <StepLabel>{t(lang, 'Step 3 of 13', 'Étape 3 sur 13', 'Paso 3 de 13', 'الخطوة 3 من 13')}</StepLabel>
+      <StepLabel>{t(lang, 'Step 3 of 12', 'Étape 3 sur 12', 'Paso 3 de 12', 'الخطوة 3 من 12')}</StepLabel>
       <StepQuestion>{t(lang, 'Your contact number', 'Votre numéro de contact', 'Tu número de contacto', 'رقم التواصل الخاص بك')}</StepQuestion>
       <Field
         label={t(lang, 'Phone Number', 'Téléphone', 'Número de teléfono', 'رقم الهاتف')}
@@ -600,7 +600,7 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
     const sizes = SIZING_VALUES[sys] || SIZING_VALUES.EU;
     return (
       <Wrapper pct={pct} hotelName={hotelName} {...wp}>
-        <StepLabel>{t(lang, 'Step 4 of 13', 'Étape 4 sur 13', 'Paso 4 de 13', 'الخطوة 4 من 13')}</StepLabel>
+        <StepLabel>{t(lang, 'Step 4 of 12', 'Étape 4 sur 12', 'Paso 4 de 12', 'الخطوة 4 من 12')}</StepLabel>
         <StepQuestion>{t(lang, 'What is your sizing?', 'Quelle est votre taille ?', '¿Cuál es su talla?', 'ما هو مقاسك؟')}</StepQuestion>
         <div style={{ marginBottom: 16, padding: '8px 14px', background: 'var(--beige-mid)', borderRadius: 'var(--radius-sm)', fontSize: 12, color: 'var(--text-muted)' }}>
           {t(lang, 'System auto-detected from nationality:', 'Système détecté selon la nationalité :', 'Sistema detectado según la nacionalidad:', 'النظام المكتشف تلقائياً حسب الجنسية:')} <strong style={{ color: 'var(--plum)' }}>{sys}</strong>
@@ -636,7 +636,7 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
   /* ── STEP 5: PURPOSE ── */
   if (step === 5) return (
     <Wrapper pct={pct} hotelName={hotelName} {...wp}>
-      <StepLabel>{t(lang, 'Step 5 of 13', 'Étape 5 sur 13', 'Paso 5 de 13', 'الخطوة 5 من 13')}</StepLabel>
+      <StepLabel>{t(lang, 'Step 5 of 12', 'Étape 5 sur 12', 'Paso 5 de 12', 'الخطوة 5 من 12')}</StepLabel>
       <StepQuestion>{t(lang, 'What brings you to this experience?', "Qu'est-ce qui vous amène ?", '¿Qué le trae a esta experiencia?', 'ما الذي يجلبك إلى هذه التجربة؟')}</StepQuestion>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {configPurposes.map(p => (
@@ -660,7 +660,7 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
   /* ── STEP 6: PS MODE ── */
   if (step === 6) return (
     <Wrapper pct={pct} hotelName={hotelName} {...wp}>
-      <StepLabel>{t(lang, 'Step 6 of 13', 'Étape 6 sur 13', 'Paso 6 de 13', 'الخطوة 6 من 13')}</StepLabel>
+      <StepLabel>{t(lang, 'Step 6 of 12', 'Étape 6 sur 12', 'Paso 6 de 12', 'الخطوة 6 من 12')}</StepLabel>
       <StepQuestion>{t(lang, 'How would you like your Personal Shopper experience?', 'Comment souhaitez-vous être accompagné(e) ?', '¿Cómo le gustaría su experiencia con el Personal Shopper?', 'كيف تريد تجربة المتسوق الشخصي الخاصة بك؟')}</StepQuestion>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {configPsModes.map(p => (
@@ -686,8 +686,8 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
     <Wrapper pct={pct} hotelName={hotelName} {...wp}>
       <StepLabel>
         {form.gender === 'Mr'
-          ? t(lang, 'Step 7 of 13 — Q12b Male Style Profile', 'Étape 7 sur 13 — Q12b Profil masculin', 'Paso 7 de 13 — Q12b Perfil masculino', 'الخطوة 7 من 13 — Q12b ملف الأسلوب الذكوري')
-          : t(lang, 'Step 7 of 13 — Q12a Female Style Profile', 'Étape 7 sur 13 — Q12a Profil féminin', 'Paso 7 de 13 — Q12a Perfil femenino', 'الخطوة 7 من 13 — Q12a ملف الأسلوب الأنثوي')}
+          ? t(lang, 'Step 7 of 12 — Q12b Male Style Profile', 'Étape 7 sur 12 — Q12b Profil masculin', 'Paso 7 de 12 — Q12b Perfil masculino', 'الخطوة 7 من 12 — Q12b ملف الأسلوب الذكوري')
+          : t(lang, 'Step 7 of 12 — Q12a Female Style Profile', 'Étape 7 sur 12 — Q12a Profil féminin', 'Paso 7 de 12 — Q12a Perfil femenino', 'الخطوة 7 من 12 — Q12a ملف الأسلوب الأنثوي')}
       </StepLabel>
       <StepQuestion>{t(lang, 'What best describes your style? (Choose up to 2)', 'Quel style vous ressemble ? (2 max)', '¿Qué describe mejor tu estilo? (Elige hasta 2)', 'ما الذي يصف أسلوبك بشكل أفضل؟ (اختر حتى 2)')}</StepQuestion>
       <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 16 }}>
@@ -722,7 +722,7 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
   /* ── STEP 8: CATEGORIES ── */
   if (step === 8) return (
     <Wrapper pct={pct} hotelName={hotelName} {...wp}>
-      <StepLabel>{t(lang, 'Step 8 of 13', 'Étape 8 sur 13', 'Paso 8 de 13', 'الخطوة 8 من 13')}</StepLabel>
+      <StepLabel>{t(lang, 'Step 8 of 12', 'Étape 8 sur 12', 'Paso 8 de 12', 'الخطوة 8 من 12')}</StepLabel>
       <StepQuestion>{t(lang, "Are there any categories you'd love us to prepare?", 'Y a-t-il des catégories que vous souhaitez ?', '¿Hay categorías que le gustaría que preparáramos?', 'هل هناك فئات تريد منا إعدادها؟')}</StepQuestion>
       <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 16 }}>
         {t(lang, 'Choose as many as you like', 'Choisissez autant que vous souhaitez', 'Elige todas las que quieras', 'اختر بقدر ما تريد')}
@@ -750,7 +750,7 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
     const brands = getBrands();
     return (
       <Wrapper pct={pct} hotelName={hotelName} {...wp}>
-        <StepLabel>{t(lang, 'Step 9 of 13', 'Étape 9 sur 13', 'Paso 9 de 13', 'الخطوة 9 من 13')}</StepLabel>
+        <StepLabel>{t(lang, 'Step 9 of 12', 'Étape 9 sur 12', 'Paso 9 de 12', 'الخطوة 9 من 12')}</StepLabel>
         <StepQuestion>{t(lang, 'Any favorite brands you gravitate toward? (up to 2)', 'Des marques préférées ? (2 max)', '¿Alguna marca favorita? (hasta 2)', 'هل هناك ماركات مفضلة لديك؟ (حتى 2)')}</StepQuestion>
         <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 16 }}>
           {t(lang, 'Based on your style selection', 'Basé sur votre sélection de style', 'Según tu selección de estilo', 'بناءً على اختيار أسلوبك')} · {form.brands.filter(b => b !== 'none').length}/2
@@ -785,7 +785,7 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
   /* ── STEP 10: LIFESTYLE ── */
   if (step === 10) return (
     <Wrapper pct={pct} hotelName={hotelName} {...wp}>
-      <StepLabel>{t(lang, 'Step 10 of 13', 'Étape 10 sur 13', 'Paso 10 de 13', 'الخطوة 10 من 13')}</StepLabel>
+      <StepLabel>{t(lang, 'Step 10 of 12', 'Étape 10 sur 12', 'Paso 10 de 12', 'الخطوة 10 من 12')}</StepLabel>
       <StepQuestion>{t(lang, 'Which categories fit your lifestyle?', 'Quelles catégories correspondent à votre style de vie ?', '¿Qué categorías encajan con tu estilo de vida?', 'ما الفئات التي تناسب أسلوب حياتك؟')}</StepQuestion>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
         {configLife.map(l => (
@@ -808,7 +808,7 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
   /* ── STEP 11: TRAVEL ── */
   if (step === 11) return (
     <Wrapper pct={pct} hotelName={hotelName} {...wp}>
-      <StepLabel>{t(lang, 'Step 11 of 13', 'Étape 11 sur 13', 'Paso 11 de 13', 'الخطوة 11 من 13')}</StepLabel>
+      <StepLabel>{t(lang, 'Step 11 of 12', 'Étape 11 sur 12', 'Paso 11 de 12', 'الخطوة 11 من 12')}</StepLabel>
       <StepQuestion>{t(lang, 'Any upcoming vacation?', 'Un voyage prévu ?', '¿Algún próximo viaje de vacaciones?', 'هل هناك إجازة قادمة؟')}</StepQuestion>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 24 }}>
         {configTravel.map(o => (
@@ -834,7 +834,7 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
   /* ── STEP 12: EVENTS ── */
   if (step === 12) return (
     <Wrapper pct={pct} hotelName={hotelName} {...wp}>
-      <StepLabel>{t(lang, 'Step 12 of 13', 'Étape 12 sur 13', 'Paso 12 de 13', 'الخطوة 12 من 13')}</StepLabel>
+      <StepLabel>{t(lang, 'Step 12 of 12', 'Étape 12 sur 12', 'Paso 12 de 12', 'الخطوة 12 من 12')}</StepLabel>
       <StepQuestion>{t(lang, 'Any upcoming events?', 'Un événement à venir ?', '¿Algún evento próximo?', 'هل هناك فعاليات قادمة؟')}</StepQuestion>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 24 }}>
         {configEvents.map(o => (
@@ -849,90 +849,46 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
       <Field label={t(lang, 'Or describe the occasion', "Ou décrivez l'occasion", 'O describe la ocasión', 'أو صف المناسبة')}>
         <TextInput value={form.eventCustom} onChange={v => set('eventCustom', v)} placeholder={t(lang, 'e.g. Launch party, charity gala...', 'ex : Soirée de lancement, gala de charité...', 'ej. Fiesta de lanzamiento, gala benéfica...', 'مثلاً: حفلة إطلاق، حفل خيري...')} />
       </Field>
+
+      {/* CONSENT */}
+      <div
+        onClick={() => set('consent', !form.consent)}
+        style={{
+          display: 'flex', gap: 14, alignItems: 'flex-start',
+          padding: '16px', border: `1.5px solid ${form.consent ? 'var(--plum-mid)' : 'var(--beige-dark)'}`,
+          borderRadius: 'var(--radius-md)', cursor: 'pointer', background: form.consent ? 'rgba(35,59,43,0.04)' : 'var(--beige)',
+          transition: 'all 0.2s', marginBottom: 8, marginTop: 8,
+          touchAction: 'manipulation',
+        }}
+      >
+        <div style={{
+          width: 20, height: 20, borderRadius: 5, flexShrink: 0, marginTop: 1,
+          border: `2px solid ${form.consent ? 'var(--plum)' : 'var(--beige-dark)'}`,
+          background: form.consent ? 'var(--plum)' : 'transparent',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          transition: 'all 0.2s',
+        }}>
+          {form.consent && <span style={{ color: '#fff', fontSize: 11, fontWeight: 700 }}>✓</span>}
+        </div>
+        <div style={{ fontSize: 13, color: 'var(--text-dark)', lineHeight: 1.6, fontWeight: 300 }} onClick={e => e.stopPropagation()}>
+          {t(lang,
+            <>I agree to the processing of my personal data in accordance with the Privacy Policy and{' '}<a href="https://www.thebicestercollection.com/la-vallee-village/fr/legal/site-web-termes-conditions/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--plum)', textDecoration: 'underline' }} onClick={e => e.stopPropagation()}>Terms &amp; Conditions</a>.</>,
+            <>J&apos;accepte le traitement de mes données personnelles conformément à la Politique de confidentialité et aux{' '}<a href="https://www.thebicestercollection.com/la-vallee-village/fr/legal/site-web-termes-conditions/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--plum)', textDecoration: 'underline' }} onClick={e => e.stopPropagation()}>CGU</a>.</>,
+            <>Acepto el tratamiento de mis datos personales de acuerdo con la Política de Privacidad y los{' '}<a href="https://www.thebicestercollection.com/la-vallee-village/fr/legal/site-web-termes-conditions/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--plum)', textDecoration: 'underline' }} onClick={e => e.stopPropagation()}>Términos y Condiciones</a>.</>,
+            <>أوافق على معالجة بياناتي الشخصية وفقاً لسياسة الخصوصية و<a href="https://www.thebicestercollection.com/la-vallee-village/fr/legal/site-web-termes-conditions/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--plum)', textDecoration: 'underline' }} onClick={e => e.stopPropagation()}>الشروط والأحكام</a>.</>
+          )}
+        </div>
+      </div>
+
       <NavBtns
-        onBack={back} onNext={next}
+        onBack={back}
+        onNext={handleSubmit}
         backLabel={t(lang, '← Back', '← Retour', '← Atrás', 'رجوع ←')}
-        nextLabel={t(lang, 'Continue →', 'Continuer →', 'Continuar →', '→ متابعة')}
+        nextLabel={t(lang, 'Submit', 'Envoyer', 'Enviar', 'إرسال')}
+        nextVariant="gold"
       />
     </Wrapper>
   );
-
-  /* ── STEP 13: REVIEW + CONSENT ── */
-  if (step === 13) {
-    const sys = getSizingSystem();
-    const styleNames = form.styles.map(id => getStyleName(id)).join(', ');
-    const catLabels  = form.categories.map(id => { const c = configCats.find(x => x.id === id);    return c ? getLabel(c, lang, CATEGORIES)    : id; }).join(', ');
-    const lifeLabels = form.lifestyle.map(id =>   { const l = configLife.find(x => x.id === id);    return l ? getLabel(l, lang, LIFESTYLE)      : id; }).join(', ');
-    const purposeItem  = configPurposes.find(p => p.id === form.purpose);
-    const purposeLabel = purposeItem  ? getLabel(purposeItem,  lang, PURPOSES)  : '—';
-    const psModeItem   = configPsModes.find(p => p.id === form.psMode);
-    const psModeLabel  = psModeItem   ? getLabel(psModeItem,   lang, PS_MODES)  : '—';
-    const travelLabels = [...form.travel.map(id => { const o = configTravel.find(x => x.id === id); return o ? getLabel(o, lang, TRAVEL_OPTIONS) : id; }), form.travelCustom].filter(Boolean).join(', ');
-    const eventLabels  = [...form.events.map(id =>  { const o = configEvents.find(x => x.id === id); return o ? getLabel(o, lang, EVENT_OPTIONS)  : id; }), form.eventCustom].filter(Boolean).join(', ');
-
-    return (
-      <Wrapper pct={pct} hotelName={hotelName} {...wp}>
-        <StepLabel>{t(lang, 'Step 13 of 13 — Review', 'Étape 13 sur 13 — Récapitulatif', 'Paso 13 de 13 — Revisión', 'الخطوة 13 من 13 — مراجعة')}</StepLabel>
-        <StepQuestion>{t(lang, 'Review your profile', 'Vérifiez votre profil', 'Revisa tu perfil', 'راجع ملفك الشخصي')}</StepQuestion>
-        <Card style={{ marginBottom: 20 }}>
-          <ReviewRow k={t(lang, 'Full Name', 'Nom complet', 'Nombre completo', 'الاسم الكامل')} v={`${form.firstName} ${form.surname}`} />
-          <ReviewRow k={t(lang, 'Initials', 'Initiales', 'Iniciales', 'الأحرف الأولى')} v={(form.firstName[0] + form.surname[0]).toUpperCase()} />
-          <ReviewRow k="Email" v={form.email} />
-          <ReviewRow k={t(lang, 'Phone', 'Téléphone', 'Teléfono', 'الهاتف')} v={form.phone?.full || form.phone || '—'} />
-          <ReviewRow k={t(lang, 'Address as', 'Civilité', 'Tratamiento', 'المخاطبة')} v={form.gender} />
-          <ReviewRow k={t(lang, 'Nationality', 'Nationalité', 'Nacionalidad', 'الجنسية')} v={form.nationality} />
-          <ReviewRow k={t(lang, 'Sizing', 'Taille', 'Talla', 'المقاس')} v={form.sizingValue ? `${form.sizingValue} (${sys})` : '—'} />
-          <Divider style={{ margin: '4px 0' }} />
-          <ReviewRow k={t(lang, 'Purpose', 'Intention', 'Propósito', 'الغرض')} v={purposeLabel} />
-          <ReviewRow k={t(lang, 'PS Mode', 'Mode PS', 'Modo PS', 'نمط PS')} v={psModeLabel} />
-          <ReviewRow k={t(lang, 'Styles', 'Styles', 'Estilos', 'الأساليب')} v={styleNames} />
-          <ReviewRow k={t(lang, 'Categories', 'Catégories', 'Categorías', 'الفئات')} v={catLabels} />
-          <ReviewRow k={t(lang, 'Brands', 'Marques', 'Marcas', 'الماركات')} v={form.brands.filter(b => b !== 'none').join(', ')} />
-          <ReviewRow k={t(lang, 'Lifestyle', 'Style de vie', 'Estilo de vida', 'نمط الحياة')} v={lifeLabels} />
-          <ReviewRow k={t(lang, 'Travel', 'Voyage', 'Viaje', 'السفر')} v={travelLabels} />
-          <ReviewRow k={t(lang, 'Events', 'Événements', 'Eventos', 'الفعاليات')} v={eventLabels} />
-        </Card>
-
-        {/* CONSENT */}
-        <div
-          onClick={() => set('consent', !form.consent)}
-          style={{
-            display: 'flex', gap: 14, alignItems: 'flex-start',
-            padding: '16px', border: `1.5px solid ${form.consent ? 'var(--plum-mid)' : 'var(--beige-dark)'}`,
-            borderRadius: 'var(--radius-md)', cursor: 'pointer', background: form.consent ? 'rgba(35,59,43,0.04)' : 'var(--beige)',
-            transition: 'all 0.2s', marginBottom: 8,
-            touchAction: 'manipulation',
-          }}
-        >
-          <div style={{
-            width: 20, height: 20, borderRadius: 5, flexShrink: 0, marginTop: 1,
-            border: `2px solid ${form.consent ? 'var(--plum)' : 'var(--beige-dark)'}`,
-            background: form.consent ? 'var(--plum)' : 'transparent',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            transition: 'all 0.2s',
-          }}>
-            {form.consent && <span style={{ color: '#fff', fontSize: 11, fontWeight: 700 }}>✓</span>}
-          </div>
-          <div style={{ fontSize: 13, color: 'var(--text-dark)', lineHeight: 1.6, fontWeight: 300 }}>
-            {t(lang,
-              'I agree to the processing of my personal data in accordance with the Privacy Policy and Terms & Conditions.',
-              "J'accepte le traitement de mes données personnelles conformément à la Politique de confidentialité et aux CGU.",
-              'Acepto el tratamiento de mis datos personales de acuerdo con la Política de Privacidad y los Términos y Condiciones.',
-              'أوافق على معالجة بياناتي الشخصية وفقاً لسياسة الخصوصية والشروط والأحكام.'
-            )}
-          </div>
-        </div>
-
-        <NavBtns
-          onBack={back}
-          onNext={handleSubmit}
-          backLabel={t(lang, '← Back', '← Retour', '← Atrás', 'رجوع ←')}
-          nextLabel={t(lang, 'Submit', 'Envoyer', 'Enviar', 'إرسال')}
-          nextVariant="gold"
-        />
-      </Wrapper>
-    );
-  }
 
   return null;
 }
