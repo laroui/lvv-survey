@@ -446,7 +446,11 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
               src="/images/LVV-LOGO.png"
               alt="La Vallée Village"
               style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: 0.85 }}
+              onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }}
             />
+            <span style={{ display: 'none', fontSize: 11, letterSpacing: '0.12em', color: 'rgba(245,240,230,0.9)', fontWeight: 400, textTransform: 'uppercase', fontFamily: 'var(--font-sans)' }}>
+              La Vallée Village
+            </span>
           </div>
           <div style={{ fontSize: 20, color: 'rgba(245,240,230,0.35)', fontWeight: 300, lineHeight: 1, flexShrink: 0, padding: '0 4px' }}>×</div>
           {/* Partner logo — left-aligned inside its half */}
