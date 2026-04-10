@@ -53,5 +53,16 @@ export async function runMigrations() {
     })}::jsonb
     WHERE slug = 'peninsula-paris'
   `;
-  console.log('[migrations] Peninsula Paris theme updated to forest green');
+  // Also update the form's theme column — this is what PublicSurveyPage reads
+  // to override CSS variables (--plum etc.) at runtime.
+  await sql`
+    UPDATE forms SET theme = ${JSON.stringify({
+      primaryColor: '#233B2B',
+      primaryDark: '#111e16',
+      accentColor: '#C9A84C',
+      backgroundColor: '#F5F0E6',
+    })}::jsonb
+    WHERE slug = 'peninsula-paris-pre-arrival'
+  `;
+  console.log('[migrations] Peninsula Paris theme updated to forest green (partners + forms)');
 }
