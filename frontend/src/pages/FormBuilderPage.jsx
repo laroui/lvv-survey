@@ -11,7 +11,7 @@ const DEFAULT_CONFIG = {
   language: 'en',
   bilingualEnabled: true,
   enabledLanguages: ['en', 'fr'],
-  questions: { sizing: true, lifestyle: true, travel: true, events: true },
+  questions: { sizing: true, brands: true, lifestyle: true, travel: true, events: true },
   thankYouMessage: 'Your Personal Shopper will be in touch before your arrival.',
   thankYouMessageFR: '',
   styles: null,
@@ -270,6 +270,7 @@ export default function FormBuilderPage() {
                   Optional Sections
                 </div>
                 <Toggle label="Sizing System" checked={config.questions.sizing} onChange={v => updateQuestion('sizing', v)} />
+                <Toggle label="Favourite Brands" checked={config.questions.brands !== false} onChange={v => updateQuestion('brands', v)} />
                 <Toggle label="Lifestyle" checked={config.questions.lifestyle} onChange={v => updateQuestion('lifestyle', v)} />
                 <Toggle label="Upcoming Travel" checked={config.questions.travel} onChange={v => updateQuestion('travel', v)} />
                 <Toggle label="Upcoming Events" checked={config.questions.events} onChange={v => updateQuestion('events', v)} />
