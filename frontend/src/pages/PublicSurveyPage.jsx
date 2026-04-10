@@ -165,32 +165,31 @@ export default function PublicSurveyPage() {
           </div>
         </div>
 
-        {/* Dual logo footer — same as start screen */}
-        <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', paddingTop: '2.5rem', width: '100%', boxSizing: 'border-box' }}>
-          <div style={{ flex: 1, height: 56, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 12 }}>
+        {/* Dual logo footer */}
+        <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '2.5rem', width: '100%', boxSizing: 'border-box', gap: 0 }}>
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 8 }}>
             <img
-              src="/images/LVV Logo Black transparent.png"
+              src="/images/Logo lvv New.PNG"
               alt="La Vallée Village"
-              style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: 0.85 }}
+              style={{ height: 64, width: 'auto', maxWidth: '100%', objectFit: 'contain', opacity: 0.9 }}
               onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }}
             />
             <span style={{ display: 'none', fontSize: 11, letterSpacing: '0.12em', color: 'rgba(245,240,230,0.9)', fontWeight: 400, textTransform: 'uppercase', fontFamily: 'var(--font-sans)' }}>
               La Vallée Village
             </span>
           </div>
-          <div style={{ fontSize: 20, color: 'rgba(245,240,230,0.35)', fontWeight: 300, lineHeight: 1, flexShrink: 0, padding: '0 4px' }}>×</div>
-          <div style={{ flex: 1, height: 56, display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingLeft: 12 }}>
+          <img src="/images/xSeperator.PNG" alt="×" style={{ height: 64, width: 'auto', flexShrink: 0, opacity: 0.6 }} />
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingLeft: 8 }}>
             {partnerLogoUrl ? (
               <img
                 src={partnerLogoUrl} alt={partnerName}
-                style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: 0.85 }}
-                onError={e => { e.target.style.display = 'none'; }}
+                style={{ height: 64, width: 'auto', maxWidth: '100%', objectFit: 'contain', opacity: 0.9 }}
+                onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }}
               />
-            ) : (
-              <div style={{ fontSize: 11, letterSpacing: '0.12em', color: 'rgba(245,240,230,0.9)', fontWeight: 400, textTransform: 'uppercase', fontFamily: 'var(--font-sans)', lineHeight: 1.4 }}>
-                {partnerName}
-              </div>
-            )}
+            ) : null}
+            <span style={{ display: partnerLogoUrl ? 'none' : 'block', fontSize: 11, letterSpacing: '0.12em', color: 'rgba(245,240,230,0.9)', fontWeight: 400, textTransform: 'uppercase', fontFamily: 'var(--font-sans)', lineHeight: 1.4 }}>
+              {partnerName}
+            </span>
           </div>
         </div>
       </div>

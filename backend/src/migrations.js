@@ -64,5 +64,10 @@ export async function runMigrations() {
     })}::jsonb
     WHERE slug = 'peninsula-paris-pre-arrival'
   `;
+  // Update Peninsula logo_url to new outline PNG asset
+  await sql`
+    UPDATE partners SET logo_url = '/images/Logo PN new.PNG'
+    WHERE slug = 'peninsula-paris'
+  `;
   console.log('[migrations] Peninsula Paris theme updated to forest green (partners + forms)');
 }
