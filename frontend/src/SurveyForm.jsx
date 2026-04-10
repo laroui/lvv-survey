@@ -443,7 +443,7 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
           {/* LVV logo — right-aligned inside its half */}
           <div style={{ flex: 1, height: 56, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 12 }}>
             <img
-              src="/images/LVV-LOGO.png"
+              src="/images/LVV Logo Black transparent.png"
               alt="La Vallée Village"
               style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: 0.85 }}
               onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }}
