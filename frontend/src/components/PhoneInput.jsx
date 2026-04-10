@@ -200,6 +200,16 @@ export default function PhoneInput({ value = '', onChange, nationality = '' }) {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
+  // Sync dial code when nationality changes (e.g. guest picks UK on prev step → +44 auto-sets here)
+  useEffect(() => {
+    if (!nationality) return;
+    const entry = resolveNationality(nationality);
+    if (!entry) return;
+    setDialCode(entry.code);
+    setSelectedName(entry.name);
+    onChange({ dialCode: entry.code, number, full: number ? `${entry.code} ${number}` : '' });
+  }, [nationality]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const notifyChange = (dc, num) => {
     onChange({ dialCode: dc, number: num, full: num ? `${dc} ${num}` : '' });
   };
