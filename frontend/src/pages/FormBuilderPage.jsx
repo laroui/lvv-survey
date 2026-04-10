@@ -85,6 +85,7 @@ export default function FormBuilderPage() {
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState(null);
   const [tab, setTab] = useState('settings'); // 'settings' | 'content'
+  const [msgOpen, setMsgOpen] = useState(false);
 
   useEffect(() => {
     fetch(`${API}/api/partners`, { headers: { Authorization: `Bearer ${TOKEN()}` } })
@@ -293,49 +294,67 @@ export default function FormBuilderPage() {
                 <Toggle label="Upcoming Events" checked={config.questions.events} onChange={v => updateQuestion('events', v)} />
               </div>
 
-              <div style={{ marginTop: '1.5rem', marginBottom: 4 }}>
-                <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#999', marginBottom: 4 }}>
-                  Thank You Message
-                </div>
-                <div style={{ fontSize: 11, color: '#bbb', marginBottom: 12, fontWeight: 300 }}>
-                  Shown on the final screen. Leave a language blank to use the built-in default for that nationality.
-                </div>
-              </div>
-
-              <FieldLabel label="English (EN) — required">
-                <textarea
-                  style={{ ...inputStyle, height: 68, resize: 'vertical' }}
-                  value={config.thankYouMessage}
-                  onChange={e => setConfig(c => ({ ...c, thankYouMessage: e.target.value }))}
-                />
-              </FieldLabel>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                {[
-                  { key: 'thankYouMessageFR', label: 'Français (FR)' },
-                  { key: 'thankYouMessageES', label: 'Español (ES)' },
-                  { key: 'thankYouMessageAR', label: 'العربية (AR)', rtl: true },
-                  { key: 'thankYouMessageZH', label: '中文 (ZH)' },
-                  { key: 'thankYouMessageHI', label: 'हिन्दी (HI)' },
-                  { key: 'thankYouMessageBN', label: 'বাংলা (BN)' },
-                  { key: 'thankYouMessagePT', label: 'Português (PT)' },
-                  { key: 'thankYouMessageRU', label: 'Русский (RU)' },
-                  { key: 'thankYouMessageJA', label: '日本語 (JA)' },
-                  { key: 'thankYouMessageDE', label: 'Deutsch (DE)' },
-                  { key: 'thankYouMessageKO', label: '한국어 (KO)' },
-                  { key: 'thankYouMessageIT', label: 'Italiano (IT)' },
-                ].map(({ key, label, rtl }) => (
-                  <div key={key} style={{ marginBottom: 4 }}>
-                    <label style={{ display: 'block', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#999', marginBottom: 5 }}>{label}</label>
-                    <textarea
-                      dir={rtl ? 'rtl' : 'ltr'}
-                      style={{ ...inputStyle, height: 60, resize: 'vertical', fontSize: 12 }}
-                      value={config[key] || ''}
-                      onChange={e => setConfig(c => ({ ...c, [key]: e.target.value }))}
-                      placeholder="Leave blank for default"
-                    />
+              {/* ── Collapsible Thank You Message section ── */}
+              <div style={{ marginTop: '1.5rem', borderTop: '1px solid var(--beige-mid)', paddingTop: '1rem' }}>
+                <button
+                  onClick={() => setMsgOpen(o => !o)}
+                  style={{
+                    width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    background: 'none', border: 'none', cursor: 'pointer', padding: '2px 0', marginBottom: msgOpen ? 12 : 0,
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#999' }}>
+                      Thank You Message
+                    </span>
+                    <span style={{ fontSize: 10, color: 'var(--gold)', fontWeight: 400 }}>13 languages</span>
                   </div>
-                ))}
+                  <span style={{ fontSize: 14, color: '#bbb', transition: 'transform 0.2s', display: 'inline-block', transform: msgOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>▾</span>
+                </button>
+
+                {msgOpen && (
+                  <>
+                    <div style={{ fontSize: 11, color: '#bbb', marginBottom: 14, fontWeight: 300 }}>
+                      Shown on the final screen. Leave a language blank to use the built-in default.
+                    </div>
+
+                    <FieldLabel label="English (EN) — required">
+                      <textarea
+                        style={{ ...inputStyle, height: 68, resize: 'vertical' }}
+                        value={config.thankYouMessage}
+                        onChange={e => setConfig(c => ({ ...c, thankYouMessage: e.target.value }))}
+                      />
+                    </FieldLabel>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                      {[
+                        { key: 'thankYouMessageFR', label: 'Français (FR)' },
+                        { key: 'thankYouMessageES', label: 'Español (ES)' },
+                        { key: 'thankYouMessageAR', label: 'العربية (AR)', rtl: true },
+                        { key: 'thankYouMessageZH', label: '中文 (ZH)' },
+                        { key: 'thankYouMessageHI', label: 'हिन्दी (HI)' },
+                        { key: 'thankYouMessageBN', label: 'বাংলা (BN)' },
+                        { key: 'thankYouMessagePT', label: 'Português (PT)' },
+                        { key: 'thankYouMessageRU', label: 'Русский (RU)' },
+                        { key: 'thankYouMessageJA', label: '日本語 (JA)' },
+                        { key: 'thankYouMessageDE', label: 'Deutsch (DE)' },
+                        { key: 'thankYouMessageKO', label: '한국어 (KO)' },
+                        { key: 'thankYouMessageIT', label: 'Italiano (IT)' },
+                      ].map(({ key, label, rtl }) => (
+                        <div key={key} style={{ marginBottom: 4 }}>
+                          <label style={{ display: 'block', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#999', marginBottom: 5 }}>{label}</label>
+                          <textarea
+                            dir={rtl ? 'rtl' : 'ltr'}
+                            style={{ ...inputStyle, height: 60, resize: 'vertical', fontSize: 12 }}
+                            value={config[key] || ''}
+                            onChange={e => setConfig(c => ({ ...c, [key]: e.target.value }))}
+                            placeholder="Leave blank for default"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
