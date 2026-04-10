@@ -216,14 +216,8 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
   // Device fingerprint collected once on mount
   const [deviceInfo] = useState(collectDeviceInfo);
 
-  // Restore step / lang / form from localStorage if the user had a previous session
-  const [step, setStep] = useState(() => {
-    if (!storageKey) return -1;
-    try {
-      const s = JSON.parse(localStorage.getItem(storageKey) || '{}');
-      return typeof s.step === 'number' && s.step >= 0 ? s.step : -1;
-    } catch { return -1; }
-  });
+  // Always start at the welcome screen — saved step is intentionally ignored
+  const [step, setStep] = useState(-1);
   const [lang, setLang] = useState(() => {
     if (!storageKey) return 'en';
     try { return JSON.parse(localStorage.getItem(storageKey) || '{}').lang || 'en'; }
