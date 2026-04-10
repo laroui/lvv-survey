@@ -14,6 +14,17 @@ const DEFAULT_CONFIG = {
   questions: { sizing: true, brands: true, lifestyle: true, travel: true, events: true },
   thankYouMessage: 'Your Personal Shopper will be in touch before your arrival.',
   thankYouMessageFR: '',
+  thankYouMessageES: '',
+  thankYouMessageAR: '',
+  thankYouMessageZH: '',
+  thankYouMessageHI: '',
+  thankYouMessageBN: '',
+  thankYouMessagePT: '',
+  thankYouMessageRU: '',
+  thankYouMessageJA: '',
+  thankYouMessageDE: '',
+  thankYouMessageKO: '',
+  thankYouMessageIT: '',
   styles: null,
   categories: null,
   purposes: null,
@@ -276,22 +287,50 @@ export default function FormBuilderPage() {
                 <Toggle label="Upcoming Events" checked={config.questions.events} onChange={v => updateQuestion('events', v)} />
               </div>
 
-              <FieldLabel label="Thank You Message (EN)">
+              <div style={{ marginTop: '1.5rem', marginBottom: 4 }}>
+                <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#999', marginBottom: 4 }}>
+                  Thank You Message
+                </div>
+                <div style={{ fontSize: 11, color: '#bbb', marginBottom: 12, fontWeight: 300 }}>
+                  Shown on the final screen. Leave a language blank to use the built-in default for that nationality.
+                </div>
+              </div>
+
+              <FieldLabel label="English (EN) — required">
                 <textarea
-                  style={{ ...inputStyle, height: 72, resize: 'vertical' }}
+                  style={{ ...inputStyle, height: 68, resize: 'vertical' }}
                   value={config.thankYouMessage}
                   onChange={e => setConfig(c => ({ ...c, thankYouMessage: e.target.value }))}
                 />
               </FieldLabel>
 
-              <FieldLabel label="Thank You Message (FR)">
-                <textarea
-                  style={{ ...inputStyle, height: 72, resize: 'vertical' }}
-                  value={config.thankYouMessageFR || ''}
-                  onChange={e => setConfig(c => ({ ...c, thankYouMessageFR: e.target.value }))}
-                  placeholder="Optional French version"
-                />
-              </FieldLabel>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                {[
+                  { key: 'thankYouMessageFR', label: 'Français (FR)' },
+                  { key: 'thankYouMessageES', label: 'Español (ES)' },
+                  { key: 'thankYouMessageAR', label: 'العربية (AR)', rtl: true },
+                  { key: 'thankYouMessageZH', label: '中文 (ZH)' },
+                  { key: 'thankYouMessageHI', label: 'हिन्दी (HI)' },
+                  { key: 'thankYouMessageBN', label: 'বাংলা (BN)' },
+                  { key: 'thankYouMessagePT', label: 'Português (PT)' },
+                  { key: 'thankYouMessageRU', label: 'Русский (RU)' },
+                  { key: 'thankYouMessageJA', label: '日本語 (JA)' },
+                  { key: 'thankYouMessageDE', label: 'Deutsch (DE)' },
+                  { key: 'thankYouMessageKO', label: '한국어 (KO)' },
+                  { key: 'thankYouMessageIT', label: 'Italiano (IT)' },
+                ].map(({ key, label, rtl }) => (
+                  <div key={key} style={{ marginBottom: 4 }}>
+                    <label style={{ display: 'block', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#999', marginBottom: 5 }}>{label}</label>
+                    <textarea
+                      dir={rtl ? 'rtl' : 'ltr'}
+                      style={{ ...inputStyle, height: 60, resize: 'vertical', fontSize: 12 }}
+                      value={config[key] || ''}
+                      onChange={e => setConfig(c => ({ ...c, [key]: e.target.value }))}
+                      placeholder="Leave blank for default"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Right — preview */}

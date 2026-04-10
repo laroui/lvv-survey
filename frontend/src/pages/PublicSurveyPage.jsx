@@ -152,13 +152,6 @@ export default function PublicSurveyPage() {
     setSurveyState('thanks');
   };
 
-  const t = (lang, en, fr, es, ar) => {
-    if (lang === 'fr' && fr) return fr;
-    if (lang === 'es' && es) return es;
-    if (lang === 'ar' && ar) return ar;
-    return en;
-  };
-
   if (loading) return (
     <div style={{
       minHeight: '100vh', background: 'var(--beige)',
@@ -192,13 +185,24 @@ export default function PublicSurveyPage() {
     const isRTL = i18n.rtl || false;
     const natFont = i18n.font;
 
-    const bodyMessage = formData?.config?.thankYouMessage
-      ? t(thanksData.lang,
-          formData.config.thankYouMessage,
-          formData.config.thankYouMessageFR || formData.config.thankYouMessage,
-          formData.config.thankYouMessageES || formData.config.thankYouMessage,
-          formData.config.thankYouMessageAR || formData.config.thankYouMessage
-        )
+    const LANG_KEY_MAP = {
+      en: 'thankYouMessage',
+      fr: 'thankYouMessageFR',
+      es: 'thankYouMessageES',
+      ar: 'thankYouMessageAR',
+      zh: 'thankYouMessageZH',
+      hi: 'thankYouMessageHI',
+      bn: 'thankYouMessageBN',
+      pt: 'thankYouMessagePT',
+      ru: 'thankYouMessageRU',
+      ja: 'thankYouMessageJA',
+      de: 'thankYouMessageDE',
+      ko: 'thankYouMessageKO',
+      it: 'thankYouMessageIT',
+    };
+    const cfg = formData?.config || {};
+    const bodyMessage = cfg.thankYouMessage
+      ? (cfg[LANG_KEY_MAP[natLang]] || cfg.thankYouMessage)
       : i18n.message;
 
     return (
