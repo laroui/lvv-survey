@@ -214,6 +214,29 @@ export default function PhoneInput({ value = '', onChange, nationality = '' }) {
     onChange({ dialCode: dc, number: num, full: num ? `${dc} ${num}` : '' });
   };
 
+  // Handle autofill: if the pasted/autofilled value starts with '+', extract the
+  // country code and strip it — so the dial code selector updates and the number
+  // field shows only the local part (e.g. "+44 7911 123456" → +44 | 7911123456).
+  const handleNumberChange = (raw) => {
+    if (raw.startsWith('+')) {
+      // Strip formatting to get a clean digit string: "+44 7911 123456" → "+447911123456"
+      const normalized = raw.replace(/[\s\-().]/g, '');
+      // Sort longest code first so +886 matches before +8
+      const sorted = [...ALL_CODES].sort((a, b) => b.code.length - a.code.length);
+      const match = sorted.find(c => normalized.startsWith(c.code));
+      if (match) {
+        const localNum = normalized.slice(match.code.length);
+        setDialCode(match.code);
+        setSelectedName(match.name);
+        setNumber(localNum);
+        notifyChange(match.code, localNum);
+        return;
+      }
+    }
+    setNumber(raw);
+    notifyChange(dialCode, raw);
+  };
+
   const selectedCountry = ALL_CODES.find(c => c.code === dialCode && c.name === selectedName)
     || ALL_CODES.find(c => c.code === dialCode)
     || PRIORITY_CODES[0];
@@ -327,7 +350,7 @@ export default function PhoneInput({ value = '', onChange, nationality = '' }) {
         name="tel"
         autoComplete="tel"
         value={number}
-        onChange={e => { setNumber(e.target.value); notifyChange(dialCode, e.target.value); }}
+        onChange={e => handleNumberChange(e.target.value)}
         placeholder="6 12 34 56 78"
         style={{
           flex: 1, padding: '11px 14px', height: 44,
