@@ -272,7 +272,7 @@ function DetailDrawer({ response, onClose, onDelete }) {
       <div
         onClick={onClose}
         style={{
-          position: 'fixed', inset: 0, background: 'rgba(42,26,34,0.35)',
+          position: 'fixed', inset: 0, background: 'rgba(17,30,22,0.35)',
           zIndex: 299, backdropFilter: 'blur(2px)',
         }}
       />
@@ -704,7 +704,7 @@ export default function ResponsesPage() {
                             background: i % 2 === 0 ? '#fff' : 'rgba(245,240,230,0.4)',
                             cursor: 'pointer', transition: 'background 0.15s',
                           }}
-                          onMouseEnter={e => e.currentTarget.style.background = 'rgba(82,56,73,0.04)'}
+                          onMouseEnter={e => e.currentTarget.style.background = 'rgba(35,59,43,0.04)'}
                           onMouseLeave={e => e.currentTarget.style.background = i % 2 === 0 ? '#fff' : 'rgba(245,240,230,0.4)'}
                         >
                           <td style={{ padding: '10px 14px', color: 'var(--plum-dark)', fontWeight: 400, whiteSpace: 'nowrap' }}>

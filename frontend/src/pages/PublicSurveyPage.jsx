@@ -100,9 +100,9 @@ export default function PublicSurveyPage() {
         <div style={{
           position: 'absolute', inset: '-20%',
           background: `
-            radial-gradient(ellipse at 20% 50%, rgba(82,56,73,0.6) 0%, transparent 60%),
+            radial-gradient(ellipse at 20% 50%, rgba(35,59,43,0.6) 0%, transparent 60%),
             radial-gradient(ellipse at 80% 20%, rgba(201,168,76,0.08) 0%, transparent 50%),
-            linear-gradient(160deg, #0a0408 0%, #1a0a12 15%, #2a1a22 40%, #3d2030 65%, #1a0a12 85%, #000 100%)
+            linear-gradient(160deg, #080f09 0%, #111e16 40%, #1a2e1e 70%, #233B2B 100%)
           `,
         }} />
         <div style={{

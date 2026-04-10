@@ -165,7 +165,7 @@ export default function FormBuilderPage() {
               disabled={saving}
               style={{
                 padding: '10px 24px', border: 'none', borderRadius: 8,
-                background: saving ? 'rgba(82,56,73,0.4)' : 'var(--plum)',
+                background: saving ? 'rgba(35,59,43,0.4)' : 'var(--plum)',
                 color: 'var(--beige)', cursor: saving ? 'not-allowed' : 'pointer',
                 fontSize: 12, fontFamily: 'var(--font-sans)',
                 letterSpacing: '0.06em', textTransform: 'uppercase',

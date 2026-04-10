@@ -19,17 +19,17 @@ export default function FormCard({ form }) {
         display: 'flex',
         flexDirection: 'column',
         gap: 12,
-        boxShadow: '0 2px 8px rgba(42,26,34,0.06)',
+        boxShadow: '0 2px 8px rgba(17,30,22,0.06)',
       }}
       onMouseEnter={e => {
         e.currentTarget.style.background = 'rgba(255,255,255,0.97)';
-        e.currentTarget.style.boxShadow = '0 20px 40px rgba(42,26,34,0.12), 0 0 0 1px rgba(201,168,76,0.2)';
+        e.currentTarget.style.boxShadow = '0 20px 40px rgba(17,30,22,0.12), 0 0 0 1px rgba(201,168,76,0.2)';
         e.currentTarget.style.transform = 'translateY(-4px)';
         e.currentTarget.style.borderColor = 'rgba(201,168,76,0.4)';
       }}
       onMouseLeave={e => {
         e.currentTarget.style.background = 'rgba(255,255,255,0.85)';
-        e.currentTarget.style.boxShadow = '0 2px 8px rgba(42,26,34,0.06)';
+        e.currentTarget.style.boxShadow = '0 2px 8px rgba(17,30,22,0.06)';
         e.currentTarget.style.transform = 'translateY(0)';
         e.currentTarget.style.borderColor = 'rgba(216,207,189,0.6)';
       }}
@@ -46,7 +46,7 @@ export default function FormCard({ form }) {
         </div>
         <span style={{
           fontSize: 10, padding: '3px 10px', borderRadius: 20,
-          background: form.is_active ? 'rgba(82,56,73,0.08)' : 'rgba(0,0,0,0.05)',
+          background: form.is_active ? 'rgba(35,59,43,0.08)' : 'rgba(0,0,0,0.05)',
           color: form.is_active ? 'var(--plum)' : '#aaa',
           fontWeight: 400, letterSpacing: '0.06em', textTransform: 'uppercase',
           whiteSpace: 'nowrap',

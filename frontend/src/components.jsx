@@ -201,8 +201,8 @@ export function StyleCard({ name, brands, selected, onClick, photoUrl }) {
         willChange: 'transform',
         transformStyle: 'preserve-3d',
         boxShadow: selected
-          ? '0 0 0 1px var(--gold), 0 8px 24px rgba(42,26,34,0.2)'
-          : '0 2px 8px rgba(42,26,34,0.1)',
+          ? '0 0 0 1px var(--gold), 0 8px 24px rgba(17,30,22,0.2)'
+          : '0 2px 8px rgba(17,30,22,0.1)',
       }}
     >
       {/* Background — photo or fallback gradient */}
@@ -307,7 +307,7 @@ export function BrandTag({ label, selected, onClick }) {
 /* ── Badge ── */
 export function Badge({ label, variant = 'plum' }) {
   const colors = {
-    plum: { bg: 'rgba(82,56,73,0.12)', color: 'var(--plum)' },
+    plum: { bg: 'rgba(35,59,43,0.12)', color: 'var(--plum)' },
     gold: { bg: 'rgba(201,168,76,0.18)', color: '#7a5e1a' },
     green: { bg: 'rgba(39,174,96,0.12)', color: '#1e8449' },
     red: { bg: 'rgba(192,57,43,0.12)', color: '#c0392b' },
@@ -329,7 +329,7 @@ export function Chip({ label }) {
     <span style={{
       display: 'inline-flex', alignItems: 'center',
       padding: '3px 10px', borderRadius: 20,
-      background: 'rgba(82,56,73,0.08)', color: 'var(--plum)',
+      background: 'rgba(35,59,43,0.08)', color: 'var(--plum)',
       fontSize: 11, fontWeight: 300,
     }}>
       {label}

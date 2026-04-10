@@ -5,7 +5,7 @@ import AdminNav from '../components/AdminNav.jsx';
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 const AUTH = () => ({ Authorization: `Bearer ${localStorage.getItem('lvv_token')}` });
 
-const DEFAULT_THEME = { primaryColor: '#523849', accentColor: '#C9A84C', backgroundColor: '#F5F0E6' };
+const DEFAULT_THEME = { primaryColor: '#233B2B', accentColor: '#C9A84C', backgroundColor: '#F5F0E6' };
 
 function PartnerModal({ partner, onClose, onSave }) {
   const editing = !!partner?.id;
@@ -41,7 +41,7 @@ function PartnerModal({ partner, onClose, onSave }) {
     <>
       <div
         onClick={onClose}
-        style={{ position: 'fixed', inset: 0, background: 'rgba(42,26,34,0.4)', zIndex: 299, backdropFilter: 'blur(2px)' }}
+        style={{ position: 'fixed', inset: 0, background: 'rgba(17,30,22,0.4)', zIndex: 299, backdropFilter: 'blur(2px)' }}
       />
       <div style={{
         position: 'fixed', top: '50%', left: '50%',
@@ -153,7 +153,7 @@ function PartnerCard({ partner, onClick }) {
       }}
       onMouseEnter={e => {
         e.currentTarget.style.borderColor = 'var(--plum)';
-        e.currentTarget.style.boxShadow = '0 4px 20px rgba(82,56,73,0.1)';
+        e.currentTarget.style.boxShadow = '0 4px 20px rgba(35,59,43,0.1)';
       }}
       onMouseLeave={e => {
         e.currentTarget.style.borderColor = 'var(--beige-mid)';

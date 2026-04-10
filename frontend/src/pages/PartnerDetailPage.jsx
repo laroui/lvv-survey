@@ -288,7 +288,7 @@ export default function PartnerDetailPage() {
                       <div style={{ fontSize: 12, color: '#aaa' }}>{f.response_count ?? 0} responses</div>
                       <span style={{
                         padding: '3px 10px', borderRadius: 20, fontSize: 10,
-                        background: f.is_active ? 'rgba(82,56,73,0.08)' : 'rgba(0,0,0,0.05)',
+                        background: f.is_active ? 'rgba(35,59,43,0.08)' : 'rgba(0,0,0,0.05)',
                         color: f.is_active ? 'var(--plum)' : '#aaa',
                         textTransform: 'uppercase', letterSpacing: '0.06em',
                       }}>
@@ -334,7 +334,7 @@ export default function PartnerDetailPage() {
                 Theme Preset
               </div>
               {[
-                { label: 'Primary', val: theme.primaryColor || '#523849' },
+                { label: 'Primary', val: theme.primaryColor || '#233B2B' },
                 { label: 'Accent', val: theme.accentColor || '#C9A84C' },
                 { label: 'Background', val: theme.backgroundColor || '#F5F0E6' },
               ].map(c => (

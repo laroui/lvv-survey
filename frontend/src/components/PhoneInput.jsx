@@ -265,7 +265,7 @@ export default function PhoneInput({ value = '', onChange, nationality = '' }) {
             position: 'absolute', top: '100%', left: 0, zIndex: 200,
             background: '#fff', border: '1px solid var(--beige-dark)',
             borderRadius: 10, marginTop: 4,
-            boxShadow: '0 8px 32px rgba(82,56,73,0.14)',
+            boxShadow: '0 8px 32px rgba(35,59,43,0.14)',
             width: 'min(260px, calc(100vw - 32px))', maxHeight: 320, overflow: 'hidden',
             display: 'flex', flexDirection: 'column',
           }}>

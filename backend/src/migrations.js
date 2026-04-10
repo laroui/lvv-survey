@@ -42,4 +42,16 @@ export async function runMigrations() {
     END $$
   `;
   console.log('[migrations] Response session/device schema up to date');
+
+  // BATCH-12: rebrand plum → forest green for Peninsula Paris
+  await sql`
+    UPDATE partners SET theme_preset = ${JSON.stringify({
+      primaryColor: '#233B2B',
+      primaryDark: '#111e16',
+      accentColor: '#C9A84C',
+      backgroundColor: '#F5F0E6',
+    })}::jsonb
+    WHERE slug = 'peninsula-paris'
+  `;
+  console.log('[migrations] Peninsula Paris theme updated to forest green');
 }

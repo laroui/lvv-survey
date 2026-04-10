@@ -79,7 +79,8 @@ const peninsulaConfig = {
 };
 
 const peninsulaTheme = {
-  primaryColor: '#523849',
+  primaryColor: '#233B2B',
+  primaryDark: '#111e16',
   accentColor: '#C9A84C',
   backgroundColor: '#F5F0E6',
   heroImage: null,

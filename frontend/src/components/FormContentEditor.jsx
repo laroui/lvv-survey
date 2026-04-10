@@ -100,7 +100,7 @@ function StyleItem({ style, index, onChange, onRemove }) {
         onClick={() => setOpen(o => !o)}
         style={{
           display: 'flex', alignItems: 'center', padding: '10px 14px',
-          cursor: 'pointer', background: open ? 'rgba(82,56,73,0.04)' : '#fff',
+          cursor: 'pointer', background: open ? 'rgba(35,59,43,0.04)' : '#fff',
           gap: 10,
         }}
       >

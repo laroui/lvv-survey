@@ -116,7 +116,7 @@ export default function ResponsesPage({ responses, onDelete }) {
               <tbody>
                 {responses.map((r, i) => (
                   <tr key={r.id} style={{ transition: 'background 0.15s' }}
-                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(82,56,73,0.02)'}
+                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(35,59,43,0.02)'}
                     onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                   >
                     <td style={{ padding: '12px', borderBottom: '1px solid var(--beige-mid)', color: 'var(--text-muted)', fontWeight: 300 }}>{i + 1}</td>
@@ -173,7 +173,7 @@ export default function ResponsesPage({ responses, onDelete }) {
             <tbody>
               {SP_COLUMNS.map((col, i) => (
                 <tr key={i}
-                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(82,56,73,0.02)'}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(35,59,43,0.02)'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >
                   <td style={{ padding: '8px 12px', borderBottom: '1px solid var(--beige-mid)', fontFamily: 'monospace', color: 'var(--plum)', fontSize: 12 }}>{col.webapp}</td>

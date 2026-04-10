@@ -63,7 +63,7 @@ function DeviceModal({ info, onClose }) {
     <div
       onClick={onClose}
       style={{
-        position: 'fixed', inset: 0, background: 'rgba(42,26,34,0.5)',
+        position: 'fixed', inset: 0, background: 'rgba(17,30,22,0.5)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         zIndex: 1000, padding: '1rem',
       }}
@@ -73,7 +73,7 @@ function DeviceModal({ info, onClose }) {
         style={{
           background: '#fff', borderRadius: 12, padding: '1.5rem',
           maxWidth: 460, width: '100%',
-          boxShadow: '0 20px 60px rgba(42,26,34,0.2)',
+          boxShadow: '0 20px 60px rgba(17,30,22,0.2)',
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
@@ -125,7 +125,7 @@ export default function FormDetailPage() {
 
   useEffect(() => {
     if (form && qrRef.current) {
-      QRCode.toCanvas(qrRef.current, publicUrl, { width: 160, margin: 1, color: { dark: '#523849', light: '#F5F0E6' } });
+      QRCode.toCanvas(qrRef.current, publicUrl, { width: 160, margin: 1, color: { dark: '#233B2B', light: '#F5F0E6' } });
     }
   }, [form, publicUrl]);
 
@@ -182,7 +182,7 @@ export default function FormDetailPage() {
           </div>
           <span style={{
             padding: '4px 14px', borderRadius: 20, fontSize: 11,
-            background: form.is_active ? 'rgba(82,56,73,0.08)' : 'rgba(0,0,0,0.05)',
+            background: form.is_active ? 'rgba(35,59,43,0.08)' : 'rgba(0,0,0,0.05)',
             color: form.is_active ? 'var(--plum)' : '#aaa',
             textTransform: 'uppercase', letterSpacing: '0.06em',
           }}>

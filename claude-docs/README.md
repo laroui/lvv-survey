@@ -39,3 +39,32 @@ Each batch is a self-contained `.md` file that Claude Code executes in one sessi
 - The **partnership team** logs in, creates/customises forms, shares the URL
 - Guests fill the form — data goes to the DB + optional SP webhook
 - Louise's **visual style preset** is the default theme
+
+## Roadmap (updated)
+
+| Batch | Scope | Status |
+|-------|-------|--------|
+| BATCH-01 | Backend scaffold — Node/Express + Neon/PG + monorepo | ✅ Done |
+| BATCH-02 | Auth — email/password + JWT + protected routes | ✅ Done |
+| BATCH-03 | Form builder — create/edit/delete templates | ✅ Done |
+| BATCH-04 | Unique URL /f/:token + public guest survey page | ✅ Done |
+| BATCH-05 | Style photo cards (Louise's visual design) | ✅ Done |
+| BATCH-06 | Responses dashboard — analytics + export | ✅ Done |
+| BATCH-07 | Partner management — Peninsula as first partner | ✅ Done |
+| BATCH-08 | Power Automate webhook → SharePoint (backlog) | ⏸ Paused |
+| BATCH-09 | Multilingual — Spanish + Arabic, RTL support | 🔜 Next |
+| BATCH-10 | Visual polish — parallax, glassmorphism, animations | 🔜 Next |
+
+## How to Use With Claude Code
+
+1. Open Claude Code in the project root
+2. Start every session: drag `claude-docs/CONTEXT.md` + the target `BATCH-XX.md`
+3. Say: "Read these files and execute the batch"
+4. Claude Code implements → you review → commit with exact message from batch file
+5. Push → Vercel/Railway auto-deploy
+
+## Key Notes
+- BATCH-09 and BATCH-10 are independent — can run in parallel or either order
+- BATCH-09 adds `translations.js` — make sure all SurveyForm.jsx `t()` calls are migrated
+- BATCH-10 animations must respect `prefers-reduced-motion`
+- Arabic (AR) requires `dir="rtl"` on the survey wrapper — test thoroughly on mobile

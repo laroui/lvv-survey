@@ -376,9 +376,9 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
         <div style={{
           position: 'absolute', inset: '-20%',
           background: `
-            radial-gradient(ellipse at 20% 50%, rgba(82,56,73,0.6) 0%, transparent 60%),
+            radial-gradient(ellipse at 20% 50%, rgba(35,59,43,0.6) 0%, transparent 60%),
             radial-gradient(ellipse at 80% 20%, rgba(201,168,76,0.08) 0%, transparent 50%),
-            linear-gradient(160deg, #0a0408 0%, #1a0a12 15%, #2a1a22 40%, #3d2030 65%, #1a0a12 85%, #000 100%)
+            linear-gradient(160deg, #080f09 0%, #111e16 40%, #1a2e1e 70%, #233B2B 100%)
           `,
         }} />
         {/* Bottom fade to black */}
@@ -891,7 +891,7 @@ export default function SurveyForm({ onComplete, config = {}, partnerName, partn
           style={{
             display: 'flex', gap: 14, alignItems: 'flex-start',
             padding: '16px', border: `1.5px solid ${form.consent ? 'var(--plum-mid)' : 'var(--beige-dark)'}`,
-            borderRadius: 'var(--radius-md)', cursor: 'pointer', background: form.consent ? 'rgba(82,56,73,0.04)' : 'var(--beige)',
+            borderRadius: 'var(--radius-md)', cursor: 'pointer', background: form.consent ? 'rgba(35,59,43,0.04)' : 'var(--beige)',
             transition: 'all 0.2s', marginBottom: 8,
             touchAction: 'manipulation',
           }}
