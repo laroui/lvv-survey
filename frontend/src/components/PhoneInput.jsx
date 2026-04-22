@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 
-// All country codes — prioritised ones come first (matching NATIONALITIES in data.js)
 const PRIORITY_CODES = [
   { code: '+33',  flag: '🇫🇷', name: 'France' },
   { code: '+44',  flag: '🇬🇧', name: 'United Kingdom' },
@@ -169,7 +168,6 @@ const OTHER_CODES = [
 
 const ALL_CODES = [...PRIORITY_CODES, ...OTHER_CODES];
 
-// Resolve a nationality name (from SurveyForm step 2) to a dial-code entry
 function resolveNationality(name) {
   if (!name) return null;
   return ALL_CODES.find(c => c.name.toLowerCase() === name.toLowerCase()) || null;
@@ -178,50 +176,57 @@ function resolveNationality(name) {
 export default function PhoneInput({ value = '', onChange, nationality = '' }) {
   const natEntry = resolveNationality(nationality);
 
-  // value format: { dialCode: '+33', number: '612345678' }
-  // If no existing value, default to the nationality's code (else France)
-  const parsed = typeof value === 'object' ? value : { dialCode: '', number: value || '' };
+  // ✅ FIX: value is always a plain string now — parse dial code from it if present
   const defaultCode = natEntry?.code || '+33';
-  const [dialCode, setDialCode] = useState(parsed.dialCode || defaultCode);
-  const [selectedName, setSelectedName] = useState(
-    parsed.dialCode
-      ? (ALL_CODES.find(c => c.code === parsed.dialCode)?.name || '')
-      : (natEntry?.name || PRIORITY_CODES[0].name)
-  );
-  const [number, setNumber] = useState(parsed.number || '');
+  const [dialCode, setDialCode] = useState(() => {
+    if (!value) return defaultCode;
+    const sorted = [...ALL_CODES].sort((a, b) => b.code.length - a.code.length);
+    const match = sorted.find(c => value.startsWith(c.code));
+    return match ? match.code : defaultCode;
+  });
+  const [selectedName, setSelectedName] = useState(() => {
+    if (!value) return natEntry?.name || PRIORITY_CODES[0].name;
+    const sorted = [...ALL_CODES].sort((a, b) => b.code.length - a.code.length);
+    const match = sorted.find(c => value.startsWith(c.code));
+    return match ? match.name : (natEntry?.name || PRIORITY_CODES[0].name);
+  });
+  const [number, setNumber] = useState(() => {
+    if (!value) return '';
+    const sorted = [...ALL_CODES].sort((a, b) => b.code.length - a.code.length);
+    const match = sorted.find(c => value.startsWith(c.code));
+    return match ? value.slice(match.code.length).trim() : value;
+  });
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
   const dropdownRef = useRef(null);
 
-  // Close on outside click
   useEffect(() => {
-    const handler = (e) => { if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setOpen(false); };
+    const handler = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setOpen(false);
+    };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  // Sync dial code when nationality changes (e.g. guest picks UK on prev step → +44 auto-sets here)
+  // Sync dial code when nationality changes
   useEffect(() => {
     if (!nationality) return;
     const entry = resolveNationality(nationality);
     if (!entry) return;
     setDialCode(entry.code);
     setSelectedName(entry.name);
-    onChange({ dialCode: entry.code, number, full: number ? `${entry.code} ${number}` : '' });
+    // ✅ FIX: always notify with plain string
+    onChange(number ? `${entry.code} ${number}` : '');
   }, [nationality]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // ✅ FIX: notifyChange always returns a plain string, never an object
   const notifyChange = (dc, num) => {
-    onChange({ dialCode: dc, number: num, full: num ? `${dc} ${num}` : '' });
+    onChange(num ? `${dc} ${num}` : '');
   };
 
-  // Handle autofill: if the pasted/autofilled value starts with '+', extract the
-  // country code and strip it — so the dial code selector updates and the number
-  // field shows only the local part (e.g. "+44 7911 123456" → +44 | 7911123456).
   const handleNumberChange = (raw) => {
     if (raw.startsWith('+')) {
-      // Strip formatting to get a clean digit string: "+44 7911 123456" → "+447911123456"
       const normalized = raw.replace(/[\s\-().]/g, '');
-      // Sort longest code first so +886 matches before +8
       const sorted = [...ALL_CODES].sort((a, b) => b.code.length - a.code.length);
       const match = sorted.find(c => normalized.startsWith(c.code));
       if (match) {
@@ -241,7 +246,6 @@ export default function PhoneInput({ value = '', onChange, nationality = '' }) {
     || ALL_CODES.find(c => c.code === dialCode)
     || PRIORITY_CODES[0];
 
-  // Build the ordered list: nationality entry first (if different from rest), then all
   const buildList = () => {
     if (search) {
       return ALL_CODES.filter(c =>
@@ -256,14 +260,11 @@ export default function PhoneInput({ value = '', onChange, nationality = '' }) {
   };
 
   const listItems = buildList();
-  // Divider positions when no search
   const natPinned = !search && natEntry;
-  // after natEntry (index 0) → divider at 1; after priority block → divider at PRIORITY_CODES.length + (natPinned ? 1 : 0)
   const priorityEnd = PRIORITY_CODES.length + (natPinned ? 1 : 0);
 
   return (
     <div style={{ display: 'flex', gap: 8, position: 'relative' }}>
-      {/* Dial code selector */}
       <div ref={dropdownRef} style={{ position: 'relative', flexShrink: 0 }}>
         <button
           type="button"
@@ -292,7 +293,6 @@ export default function PhoneInput({ value = '', onChange, nationality = '' }) {
             width: 'min(260px, calc(100vw - 32px))', maxHeight: 320, overflow: 'hidden',
             display: 'flex', flexDirection: 'column',
           }}>
-            {/* Search */}
             <div style={{ padding: '8px 10px', borderBottom: '1px solid var(--beige-mid)' }}>
               <input
                 autoFocus
@@ -307,21 +307,23 @@ export default function PhoneInput({ value = '', onChange, nationality = '' }) {
               />
             </div>
 
-            {/* List */}
             <div style={{ overflowY: 'auto', flex: 1 }}>
               {listItems.map((c, i) => (
                 <>
-                  {/* Divider after pinned nationality */}
                   {natPinned && i === 1 && (
                     <div key="divider-nat" style={{ height: 1, background: 'var(--beige-mid)', margin: '4px 0' }} />
                   )}
-                  {/* Divider between priority and other */}
                   {!search && i === priorityEnd && (
                     <div key="divider-priority" style={{ height: 1, background: 'var(--beige-mid)', margin: '4px 0' }} />
                   )}
                   <div
                     key={`${c.code}-${c.name}`}
-                    onClick={() => { setDialCode(c.code); setSelectedName(c.name); setOpen(false); notifyChange(c.code, number); }}
+                    onClick={() => {
+                      setDialCode(c.code);
+                      setSelectedName(c.name);
+                      setOpen(false);
+                      notifyChange(c.code, number);
+                    }}
                     style={{
                       display: 'flex', alignItems: 'center', gap: 10,
                       padding: '9px 12px', cursor: 'pointer',
@@ -342,7 +344,6 @@ export default function PhoneInput({ value = '', onChange, nationality = '' }) {
         )}
       </div>
 
-      {/* Number input — type="tel" triggers numeric keypad; autocomplete="tel" enables iOS/Android autofill suggestion */}
       <input
         type="tel"
         inputMode="tel"
